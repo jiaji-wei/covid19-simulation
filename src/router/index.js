@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-// import Home from "../views/Home.vue";
+import App from "../views/App.vue";
 import Landing from "../views/Landing.vue";
 
 const routes = [
@@ -9,6 +9,14 @@ const routes = [
     component: Landing,
     meta: {
       title: "Covid19 Simulation",
+    },
+  },
+  {
+    path: "/app",
+    name: "app",
+    component: App,
+    meta: {
+      title: "Covid19 Simulation Appliaction",
     },
   },
 ];

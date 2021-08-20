@@ -1,26 +1,10 @@
 <template>
   <div class="flex flex-col h-screen max-h-screen">
-    <div
-      class="
-        flex
-        justify-center
-        realtive
-        bg-hero-pattern bg-cover
-        px-4
-        pt-16
-        pb-16
-      "
-    >
-      <div class="w-full">
-        <h1 class="text-white text-center text-6xl pt-5 pb-5">
-          Covid 19 Simulation
-        </h1>
-      </div>
-    </div>
+    <Header />
 
     <!-- Map -->
-    <div class="flex w-3/5 h-56 m-8 ">
-      <div id="mapid" class="w-3/5 "></div>
+    <div class="flex w-3/5 h-56 m-8">
+      <div id="mapid" class="w-3/5"></div>
     </div>
   </div>
 </template>
@@ -28,10 +12,10 @@
 <script>
 import leaflet from "leaflet";
 import { onMounted } from "vue";
-
+import Header from "../components/Header.vue";
 export default {
-  name: "Home",
-  components: {},
+  name: "App",
+  components: { Header },
   setup() {
     let mymap;
 

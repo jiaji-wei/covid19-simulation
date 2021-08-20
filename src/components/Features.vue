@@ -114,19 +114,20 @@
       </div>
       <!-- Rounded Rectangle -->
       <div
-        class="
-          hidden
-          lg:block
-          overflow-hidden
-          bg-bookmark-purple
-          rounded-l-full
-          absolute
-          h-80
-          w-2/4
-          -bottom-24
-          -right-36
-        "
-      ></div>
+      class="
+        hidden
+        md:block
+        overflow-hidden
+        bg-bookmark-purple
+        rounded-l-full
+        absolute
+        h-80
+        w-2/4
+        top-32
+        right-0
+        lg:-bottom-28 lg:-right-26
+      "
+    ></div>
     </div>
     <!-- Feature #3 -->
     <div class="relative mt-20 lg:mt-52">

@@ -21,7 +21,7 @@
         type="button"
         class="bg-red-400 text-white rounded-md px-7 py-3 uppercase"
       >
-        Login
+        <router-link to="/app">Login</router-link>
       </button>
     </ul>
     <div class="flex sm:hidden flex-1 justify-end">
