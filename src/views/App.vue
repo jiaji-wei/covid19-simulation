@@ -12,15 +12,22 @@
           gap-x-24
         "
       >
-        <div class="flex flex-1 flex-row justify-center gap-4 z-10 mb-10 lg:mb-0 h-screen">
+        <div
+          class="
+            flex flex-1 flex-row
+            justify-center
+            gap-4
+            z-10
+            mb-10
+            lg:mb-0
+            h-screen
+          "
+        >
           <!-- Map -->
-          <div
-            id="mapid"
-            class="w-1/2 h-1/2 "
-          ></div>
+          <div id="mapid" class="w-1/2 h-1/2"></div>
 
           <!-- Content -->
-          <div class="w-1/2 ">
+          <div class="w-1/2">
             <div
               class="
                 flex flex-1 flex-col
@@ -32,7 +39,9 @@
               "
             >
               <div class="flex flex-col sm:flex-row items-center">
-                <h2 class="font-semibold text-lg items-centermr-auto">Controller</h2>
+                <h2 class="font-semibold text-lg items-centermr-auto">
+                  Controller
+                </h2>
               </div>
 
               <!-- Country -->
@@ -55,19 +64,19 @@
                     focus:ring-indigo-500
                   "
                 >
-                  <option value="">Please select</option>
-                  <option value="london1">london1</option>
-                  <option value="london2">london2</option>
-                  <option value="london3">london3</option>
-                  <option value="london4">london4</option>
-                  <option value="london5">london5</option>
+                  <option value="">Please Select City</option>
+                  <option value="london1">London</option>
+                  <option value="london2">New York</option>
+                  <option value="london3">Phoenix</option>
+                  <option value="london4">Sydney</option>
+                  <option value="london5">Melbourne</option>
                 </select>
               </div>
 
               <!-- Infectivity -->
               <div class="mt-5">
                 <div class="md:flex flex-row md:space-x-4 w-full text-xs">
-                  <div class="mb-3 space-y-2 w-full text-xs">
+                  <div class="mb-3  w-full text-xs">
                     <label class="font-semibold text-sm text-gray-600 py-2"
                       >Infectivity ( 0% ~ 100% )
                     </label>
@@ -82,6 +91,7 @@
                         text-grey-darker
                         border border-grey-lighter
                         rounded-lg
+                        mt-3
                         h-3
                       "
                       type="range"
@@ -100,6 +110,9 @@
                 <div class="flex flex-col sm:flex-row items-center">
                   <h2 class="font-semibold text-lg mr-auto">Mask</h2>
                 </div>
+                <h2 class="text-gray-500 mt-1 mb-2">
+                  What type mask and percentage of people in use
+                </h2>
                 <div
                   class="
                     md:flex md:flex-row
@@ -113,11 +126,11 @@
                 >
                   <!-- 普通 -->
                   <div class="w-full flex flex-col mb-3">
-                    <label class="font-semibold text-gray-600 p-2"
-                      >普通口罩</label
+                    <label class="font-semibold text-gray-600 py-2"
+                      >Surgical Mask</label
                     >
                     <input
-                      placeholder="Address"
+                      value="0"
                       class="
                         appearance-none
                         block
@@ -129,18 +142,20 @@
                         h-10
                         px-4
                       "
-                      type="text"
+                      type="number"
+                      min="0"
+                      max="100"
                       name="integration[street_address]"
-                      id="integration_street_address"
+                      id="surgical-percentage"
                     />
                   </div>
                   <!-- 手工 -->
                   <div class="w-full flex flex-col mb-3">
-                    <label class="font-semibold text-gray-600 p-2"
-                      >手工口罩</label
+                    <label class="font-semibold text-gray-600 py-2"
+                      >N95, KN95</label
                     >
                     <input
-                      placeholder="Address"
+                      value="0"
                       class="
                         appearance-none
                         block
@@ -150,11 +165,12 @@
                         border border-grey-lighter
                         rounded-lg
                         h-10
-                        px-4
                       "
-                      type="text"
+                      type="number"
+                      min="0"
+                      max="100"
                       name="integration[street_address]"
-                      id="integration_street_address"
+                      id="95-percentage"
                     />
                     <p class="text-sm text-red-500 hidden mt-3" id="error">
                       Please fill out this field.
@@ -162,11 +178,11 @@
                   </div>
                   <!-- kn96 -->
                   <div class="w-full flex flex-col mb-3">
-                    <label class="font-semibold text-gray-600 p-2"
-                      >KN95口罩</label
+                    <label class="font-semibold text-gray-600 py-2"
+                      >Cloth Mask</label
                     >
                     <input
-                      placeholder="Address"
+                      value="0"
                       class="
                         appearance-none
                         block
@@ -178,9 +194,11 @@
                         h-10
                         px-4
                       "
-                      type="text"
+                      type="number"
+                      min="0"
+                      max="100"
                       name="integration[street_address]"
-                      id="integration_street_address"
+                      id="cloth-percentage"
                     />
                     <p class="text-sm text-red-500 hidden mt-3" id="error">
                       Please fill out this field.
@@ -194,42 +212,56 @@
                 <div class="flex flex-col sm:flex-row items-center">
                   <h2 class="font-semibold text-lg mr-auto">Policy</h2>
                 </div>
-                <!-- <div class="flex flex-row space-x-4 w-full pt-3"> -->
+                <h2 class="text-gray-500 mt-1 mb-2">
+                  Apply Government Response
+                </h2>
                 <div
-                  class="grid grid-cols-2 gap-4 w-full mt-3 border-2 rounded-lg"
+                  class="
+                    grid grid-cols-2
+                    gap-4
+                    w-full
+                    mt-3
+                    p-2
+                    border-2
+                    rounded-lg
+                  "
                 >
                   <div>
                     <input
                       type="checkbox"
-                      id="checkbox-example"
+                      id="checkbox-school-closing"
                       class="h-4 w-4 border rounded mr-2"
                     />
-                    <label for="checkbox-example">关闭学校</label>
+                    <label for="checkbox-school-closing">School closing</label>
                   </div>
                   <div>
                     <input
                       type="checkbox"
-                      id="checkbox-example"
+                      id="checkbox-workplace-closing"
                       class="h-4 w-4 border rounded mr-2"
                     />
-                    <label for="checkbox-example">关闭超市</label>
+                    <label for="checkbox-workplace-closing"
+                      >Workplace closing</label
+                    >
                   </div>
 
                   <div>
                     <input
                       type="checkbox"
-                      id="checkbox-example"
+                      id="checkbox-gatherings"
                       class="h-4 w-4 border rounded mr-2"
                     />
-                    <label for="checkbox-example">关闭办公室</label>
+                    <label for="checkbox-gatherings"
+                      >Restrictions on gatherings</label
+                    >
                   </div>
                   <div>
                     <input
                       type="checkbox"
-                      id="checkbox-example"
+                      id="checkbox-stay"
                       class="h-4 w-4 border rounded mr-2"
                     />
-                    <label for="checkbox-example">关闭公园</label>
+                    <label for="checkbox-stay">Stay at home requirements</label>
                   </div>
                 </div>
               </div>
@@ -248,6 +280,26 @@
                   class="
                     mb-2
                     md:mb-0
+                    bg-blue-400
+                    px-5
+                    py-2
+                    text-sm
+                    shadow-sm
+                    font-medium
+                    tracking-wider
+                    text-white
+                    rounded-full
+                    hover:shadow-lg
+                    hover:bg-green-500
+                  "
+                >
+                  Run
+                </button>
+
+                <button
+                  class="
+                    mb-2
+                    md:mb-0
                     bg-white
                     px-5
                     py-2
@@ -262,32 +314,12 @@
                     hover:bg-gray-100
                   "
                 >
-                  Cancel
-                </button>
-                <button
-                  class="
-                    mb-2
-                    md:mb-0
-                    bg-green-400
-                    px-5
-                    py-2
-                    text-sm
-                    shadow-sm
-                    font-medium
-                    tracking-wider
-                    text-white
-                    rounded-full
-                    hover:shadow-lg
-                    hover:bg-green-500
-                  "
-                >
-                  Save
+                  Reset
                 </button>
               </div>
             </div>
           </div>
         </div>
-        
       </div>
     </div>
   </section>
