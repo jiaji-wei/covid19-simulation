@@ -23,10 +23,10 @@
             mb-6
           "
         >
-          A simple Bookmark Manager
+          Coid-19 
         </h2>
         <p class="text-bookmark-grey text-lg text-center lg:text-left mb-6">
-          A clean and simple interface to organize your favourite websites. Open
+          A Agent-based model A clean and simple interface to organize your favourite websites. Open
           a new browser tab and serr your sites load instantly. Try if for free.
         </p>
         <div class="flex justify-center flex-wrap gap-6">

@@ -41,7 +41,8 @@
                   border-gray-300
                   rounded-lg
                   shadow-sm
-                  focus:border-indigo-500 focus:ring-indigo-500
+                  focus:border-indigo-500
+                  focus:ring-indigo-500
                 "
               >
                 <option value="">Please Select City</option>
@@ -95,7 +96,8 @@
               </h2>
               <div
                 class="
-                  md:flex md:flex-row md:space-x-4
+                  md:flex md:flex-row
+                  md:space-x-4
                   w-full
                   text-xs
                   p-3
@@ -248,7 +250,8 @@
               class="
                 mt-5
                 text-right
-                md:space-x-3 md:block
+                md:space-x-3
+                md:block
                 flex flex-col-reverse
               "
             >
@@ -265,7 +268,8 @@
                   tracking-wider
                   text-white
                   rounded-full
-                  hover:shadow-lg hover:bg-green-500
+                  hover:shadow-lg
+                  hover:bg-green-500
                 "
               >
                 Run
@@ -285,7 +289,8 @@
                   border
                   text-gray-600
                   rounded-full
-                  hover:shadow-lg hover:bg-gray-100
+                  hover:shadow-lg
+                  hover:bg-gray-100
                 "
               >
                 Reset
@@ -300,13 +305,17 @@
 
 <script>
 import L from "leaflet";
-// import { onMounted } from "vue";
-import Header from "../components/Header.vue";
 import "./../static/agentmaps.js";
+
+import Header from "../components/Header.vue";
 
 import streets_data from "./../static/street_features.json";
 import units_data from "./../static/unit_features.json";
 import map_data from "./../static/map_data.json";
+
+// import streets_data from "./../static/street_features.js";
+// import units_data from "./../static/unit_features.js";
+// import map_data from "./../static/map_data.js";
 
 export default {
   name: "App",
@@ -316,9 +325,9 @@ export default {
       // map
       mymap: null,
       agentmap: null,
-      animation_interval_input: 0,
-      speed_controller_input: 0,
-      infection_probability_input: 0,
+      animation_interval_input: 5,
+      speed_controller_input: 1,
+      infection_probability_input: 0.00001,
       ticks_display: "",
       animation_interval_map: { 1: 0, 2: 1000, 3: 100, 4: 10, 5: 1 },
       bounding_box: [
@@ -334,13 +343,9 @@ export default {
   methods: {
     initMap() {
       //Set bounds for the area on the map where the simulation will run (gotten from openstreetmap.org).
-      var bounding_box = [
-        [39.9058, -86.091],
-        [39.8992, -86.1017],
-      ];
 
       //Create and setup the Leafvar map object.
-      var map = L.map("mapid").fitBounds(bounding_box).setZoom(16);
+      var map = L.map("mapid").fitBounds(this.bounding_box).setZoom(16);
 
       //Get map graphics by adding OpenStreetMap tiles to the map object.
       L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -350,12 +355,15 @@ export default {
       }).addTo(map);
 
       this.agentmap = L.A.agentmap(map);
-
-      console.log("init map....");
-      console.log(this.agentmap);
+      this.animation_interval_input = 5;
+      this.speed_controller_input = 1;
+      this.infection_probability_input = 0.00001;
     },
 
     setupSim() {
+      //Set the data displays and input options in the interface to their default values.
+      // this.defaultInterface();
+
       //Generate and display streets and units on the map.
       //Load the units from units_data instead of generating them from scratch to speed things up.
       this.agentmap.buildingify(
@@ -392,7 +400,7 @@ export default {
         ));
 
       //Generate 200 agents according to the rules of epidemicAgentMaker, displaying them as blue, .5 meter radius circles.
-      this.agentmap.agentify(300, this.epidemicAgentMaker.bind(this));
+      this.agentmap.agentify(1, this.epidemicAgentMaker.bind(this));
 
       //Attach a popup to show when any agent is clicked.
       this.agentmap.agents.bindPopup(this.agentPopupMaker);
@@ -404,7 +412,7 @@ export default {
       this.agentmap.infection_probability = 0.00001;
 
       //Set the default speed for the agent.
-      this.agentmap.speed_controller = 3;
+      this.agentmap.speed_controller = 1;
 
       //Do the following on each tick of the simulation.
       this.agentmap.controller = this.agentmapController;
@@ -422,8 +430,7 @@ export default {
       //Infect a random 10% of the population on the agentmap.
       this.infect(this.agentmap, 0.1);
 
-      //Set the data displays and input options in the interface to their default values.
-      this.defaultInterface();
+      this.agentmap.run();
     },
 
     /*                                                 */
@@ -487,29 +494,26 @@ export default {
       //Check if any of the options have been changed in the interface and update the Agentmap accordingly.
       if (
         this.agentmap.animation_interval !==
-        Number(this.animation_interval_map[this.animation_interval_input.value])
+        Number(this.animation_interval_map[this.animation_interval_input])
       ) {
         this.agentmap.setAnimationInterval(
-          this.animation_interval_map[this.animation_interval_input.value]
+          this.animation_interval_map[this.animation_interval_input]
         );
       }
       if (
-        this.agentmap.speed_controller !==
-        Number(this.speed_controller_input.value)
+        this.agentmap.speed_controller !== Number(this.speed_controller_input)
       ) {
-        this.agentmap.speed_controller = Number(
-          this.speed_controller_input.value
-        );
-        this.agentmap.agents.eachLayer(function (agent) {
+        this.agentmap.speed_controller = Number(this.speed_controller_input);
+        this.agentmap.agents.eachLayer((agent) => {
           agent.setSpeed(this.agentmap.speed_controller);
         });
       }
       if (
         this.agentmap.infection_probability !==
-        Number(this.infection_probability_input.value)
+        Number(this.infection_probability_input)
       ) {
         this.agentmap.infection_probability = Number(
-          this.infection_probability_input.value
+          this.infection_probability_input
         );
       }
     },
@@ -602,8 +606,9 @@ export default {
 
     //Given an agent, define its controller in a way conducive to the epidemic simulation.
     setAgentController(agent) {
+      
       //Do the following on each tick of the simulation for the agent.
-      agent.controller = function () {
+      agent.controller =  () => {
         //Do this when the commute_alarm tick is reached.
         if (!agent.homebound && agent.agentmap.state.ticks !== 0) {
           if (agent.agentmap.state.ticks % agent.commute_alarm === 0) {
@@ -617,6 +622,7 @@ export default {
             agent.setSpeed(agent.agentmap.speed_controller);
           }
         }
+
         //If the agent isn't already scheduled to commute, give it a chance to randomly move around its unit.
         else if (!agent.commuting) {
           if (Math.random() < 0.001) {
@@ -634,7 +640,9 @@ export default {
         this.checkInfection(agent);
 
         //Have the agent move along its scheduled trip.
-        agent.moveIt();
+        if (agent.trip.speed !== 0) {
+          agent.moveIt();
+        }
       };
     },
 
@@ -739,6 +747,7 @@ export default {
         Math.random(),
         Math.random()
       );
+      console.log("work:", random_workplace_point);
       agent.scheduleTrip(
         random_workplace_point,
         { type: "unit", id: agent.workplace_id },
@@ -759,6 +768,7 @@ export default {
         Math.random(),
         Math.random()
       );
+      console.log("home:", random_home_point);
       agent.scheduleTrip(
         random_home_point,
         { type: "unit", id: agent.home_id },

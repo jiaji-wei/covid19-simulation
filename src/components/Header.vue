@@ -15,7 +15,7 @@
       "
     >
       <li class="cursor-pointer">Features</li>
-      <li class="cursor-pointer">Pricing</li>
+      <li class="cursor-pointer">Citys</li>
       <li class="cursor-pointer">Contact</li>
       <button
         type="button"
