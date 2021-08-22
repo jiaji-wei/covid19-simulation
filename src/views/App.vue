@@ -437,7 +437,7 @@ export default {
       self.agentmap.controller = this.agentmapController;
 
       //Set each Agent up.
-      self.agentmap.agents.eachLayer(function (agent, self) {
+      self.agentmap.agents.eachLayer(function (agent) {
         //Add the agent's ID to its home unit's resident_ids array to help keep track of which agents are in the same unit.
         var home_unit = self.agentmap.units.getLayer(agent.home_id);
         home_unit.resident_ids.push(agent._leaflet_id);
