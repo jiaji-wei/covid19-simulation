@@ -76,7 +76,7 @@
               <!-- Infectivity -->
               <div class="mt-5">
                 <div class="md:flex flex-row md:space-x-4 w-full text-xs">
-                  <div class="mb-3  w-full text-xs">
+                  <div class="mb-3 w-full text-xs">
                     <label class="font-semibold text-sm text-gray-600 py-2"
                       >Infectivity ( 0% ~ 100% )
                     </label>
@@ -326,33 +326,517 @@
 </template>
 
 <script>
-import leaflet from "leaflet";
-import { onMounted } from "vue";
+import L from "leaflet";
+// import { onMounted } from "vue";
 import Header from "../components/Header.vue";
+import "./../static/agentmaps.js";
+
+import streets_data from "./../static/street_features.json";
+import units_data from "./../static/unit_features.json";
+import map_data from "./../static/map_data.json";
 
 export default {
   name: "App",
   components: { Header },
-  setup() {
-    let mymap;
-    onMounted(() => {
-      mymap = leaflet.map("mapid").setView([51.505, -0.09], 13);
-      leaflet
-        .tileLayer(
-          "https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1Ijoiamlhaml3ZWkiLCJhIjoiY2tzaXA1N29tMjJsNzJ5bnFzN2FnN25ncSJ9.y4IeHfQ7dfkRfdxipsLlZQ",
-          {
-            attribution:
-              'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-            maxZoom: 18,
-            id: "mapbox/streets-v11",
-            tileSize: 512,
-            zoomOffset: -1,
-            accessToken:
-              "pk.eyJ1Ijoiamlhaml3ZWkiLCJhIjoiY2tzaXA1N29tMjJsNzJ5bnFzN2FnN25ncSJ9.y4IeHfQ7dfkRfdxipsLlZQ",
+  data() {
+    return {
+      // map
+      mymap: null,
+      agentmap: null,
+      animation_interval_input: 0,
+      speed_controller_input: 0,
+      infection_probability_input: 0,
+      ticks_display: "",
+      animation_interval_map: { 1: 0, 2: 1000, 3: 100, 4: 10, 5: 1 },
+      bounding_box: [
+        [39.9058, -86.091],
+        [39.8992, -86.1017],
+      ],
+    };
+  },
+  mounted() {
+    this.initMap();
+    this.setupSim();
+  },
+  methods: {
+    initMap() {
+      //Set bounds for the area on the map where the simulation will run (gotten from openstreetmap.org).
+      var bounding_box = [
+        [39.9058, -86.091],
+        [39.8992, -86.1017],
+      ];
+
+      //Create and setup the Leafvar map object.
+      var map = L.map("mapid").fitBounds(bounding_box).setZoom(16);
+
+      //Get map graphics by adding OpenStreetMap tiles to the map object.
+      L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution:
+          'Thanks to <a href="http://openstreetmap.org">OpenStreetMap</a> community',
+        maxZoom: 18,
+      }).addTo(map);
+
+      self.agentmap = L.A.agentmap(map);
+
+      console.log("init map....");
+      console.log(self.agentMap);
+    },
+
+    setupSim() {
+      //Generate and display streets and units on the map.
+      //Load the units from units_data instead of generating them from scratch to speed things up.
+      self.agentmap.buildingify(
+        this.leafletbounding_box,
+        map_data,
+        undefined,
+        { color: "black", weight: 1.5, opacity: 0.6 },
+        units_data,
+        streets_data
+      );
+
+      //Split the map's units into residential and commercial zones.
+      var residential_streets = [
+          "Wythe Lane",
+          "Heyward Lane",
+          "Lynch Lane",
+          "Clymer Lane",
+        ],
+        commercial_streets = ["Heyward Place", "Heyward Drive", "Hooper Place"];
+      self.agentmap.zoned_units = this.getZonedUnits(
+        self.agentmap,
+        residential_streets,
+        commercial_streets
+      );
+
+      //Use only a subset of the zoned units.
+      (self.agentmap.zoned_units.residential = this.pick_random_n(
+        self.agentmap.zoned_units.residential,
+        100
+      )),
+        (self.agentmap.zoned_units.commercial = this.pick_random_n(
+          self.agentmap.zoned_units.commercial,
+          20
+        ));
+
+      //Generate 200 agents according to the rules of epidemicAgentMaker, displaying them as blue, .5 meter radius circles.
+      self.agentmap.agentify(300, this.epidemicAgentMaker);
+
+      //Attach a popup to show when any agent is clicked.
+      self.agentmap.agents.bindPopup(this.agentPopupMaker);
+
+      //Keep a count of how many infected agents there are.
+      self.agentmap.infected_count = 0;
+
+      //Set how infectious the disease is (the probability that someone nearby will get infected)
+      self.agentmap.infection_probability = 0.00001;
+
+      //Set the default speed for the agent.
+      self.agentmap.speed_controller = 3;
+
+      //Do the following on each tick of the simulation.
+      self.agentmap.controller = this.agentmapController;
+
+      //Set each Agent up.
+      self.agentmap.agents.eachLayer(function (agent, self) {
+        //Add the agent's ID to its home unit's resident_ids array to help keep track of which agents are in the same unit.
+        var home_unit = self.agentmap.units.getLayer(agent.home_id);
+        home_unit.resident_ids.push(agent._leaflet_id);
+
+        //Define the update_func for the agent.
+        self.setAgentController(agent);
+      });
+
+      //Infect a random 10% of the population on the agentmap.
+      self.infect(this.agentmap, 0.1);
+
+      //Set the data displays and input options in the interface to their default values.
+      self.defaultInterface();
+    },
+
+    /*                                                 */
+    /*  definitions for everything done above. */
+    /*                                                 */
+
+    //Set the elements of the interface to their default values.
+    defaultInterface() {
+      (this.speed_controller_input.value = this.agentmap.speed_controller),
+        (this.infection_probability_input.value =
+          this.agentmap.infection_probability),
+        (this.animation_interval_input.value = 5),
+        (this.ticks_display.textContent = "");
+    },
+
+    //Given an agent, return an HTML string to embed in a popup.
+    agentPopupMaker(agent) {
+      var string = "Infected: " + agent.infected + "</br>";
+
+      if (agent.infected) {
+        string += "Recovers at tick: " + agent.recovery_tick;
+      }
+
+      return string;
+    },
+
+    //Given two arrays of streets and their agentmap, split their units into residential and commercial zones,
+    //and return their division.
+    getZonedUnits(agentmap, residential_streets, commercial_streets) {
+      var zoned_units = {
+        residential: [],
+        commercial: [],
+      };
+
+      //Find and store the units on the perimeter of the lower part of the neighborhood,
+      //and along the streets in the upper part of the neighborhood.
+      self.agentmap.units.eachLayer(function (unit) {
+        var street_id = unit.street_id,
+          street = self.agentmap.streets.getLayer(street_id),
+          street_name = street.feature.properties.name;
+
+        if (residential_streets.includes(street_name)) {
+          zoned_units.residential.push(unit._leaflet_id);
+        }
+
+        if (commercial_streets.includes(street_name)) {
+          zoned_units.commercial.push(unit._leaflet_id);
+        }
+
+        //For each zoned unit, add an array to store which agents are in it for easy searching.
+        unit.resident_ids = [];
+      });
+
+      return zoned_units;
+    },
+
+    //The controller  for the Agentmap.
+    agentmapController() {
+      //Set the tick display box to display the number of the current tick.
+      this.ticks_display.textContent = this.agentmap.state.ticks;
+
+      //Check if any of the options have been changed in the interface and update the Agentmap accordingly.
+      if (
+        this.agentmap.animation_interval !==
+        Number(this.animation_interval_map[this.animation_interval_input.value])
+      ) {
+        this.agentmap.setAnimationInterval(
+          this.animation_interval_map[this.animation_interval_input.value]
+        );
+      }
+      if (
+        this.agentmap.speed_controller !==
+        Number(this.speed_controller_input.value)
+      ) {
+        this.agentmap.speed_controller = Number(
+          this.speed_controller_input.value
+        );
+        this.agentmap.agents.eachLayer(function (agent) {
+          agent.setSpeed(this.agentmap.speed_controller);
+        });
+      }
+      if (
+        this.agentmap.infection_probability !==
+        Number(this.infection_probability_input.value)
+      ) {
+        this.agentmap.infection_probability = Number(
+          this.infection_probability_input.value
+        );
+      }
+    },
+
+    //Return a GeoJSON feature representing an agent.
+    epidemicAgentMaker(id) {
+      console.log(id);
+      //Decide whether the agent will be homebound.
+      var homebound = Math.random() < 0.25 ? true : false;
+
+      //Get a random residential unit and its center.
+      var random_residential_index = Math.floor(
+          Math.random() * self.agentmap.zoned_units.residential.length
+        ),
+        random_residential_unit_id =
+          self.agentmap.zoned_units.residential[random_residential_index];
+
+      //Store the residential unit's ID as the agent's home ID.
+      var home_id = random_residential_unit_id;
+
+      var go_home_interval = null;
+      var workplace_id = null;
+      var first_go_work_interval = null;
+      var go_work_interval = null;
+
+      if (!homebound) {
+        //Get a random commercial unit and its ID.
+        var random_workplace_index = Math.floor(
+            self.agentmap.zoned_units.commercial.length * Math.random()
+          ),
+          random_workplace_id =
+            self.agentmap.zoned_units.commercial[random_workplace_index];
+
+        //Store the commercial unit's ID as the agent's workplace ID.
+        workplace_id = random_workplace_id;
+
+        //Approximately many ticks until any agent goes to work or back home will be based on these numbers.
+        //Make the first commute to work come quicker than any subsequent ones.
+        var first_go_work_base_interval = 300,
+          go_work_base_interval = 900,
+          go_home_base_interval = 900;
+
+        //Randomize how early or late agents make their commute.
+        var sign = Math.random() < 0.5 ? 1 : -1,
+          go_home_randomizer = sign * Math.floor(Math.random() * 200),
+          go_work_randomizer = -sign * Math.floor(Math.random() * 200);
+
+        (first_go_work_interval =
+          first_go_work_base_interval + go_work_randomizer),
+          (go_work_interval = go_work_base_interval + go_work_randomizer),
+          (go_home_interval = go_home_base_interval - go_home_randomizer);
+      }
+
+      //Get the agent's starting position.
+      var home_unit = self.agentmap.units.getLayer(home_id),
+        home_center_coords = L.A.pointToCoordinateArray(home_unit.getCenter());
+
+      var feature = {
+        type: "Feature",
+        properties: {
+          place: {
+            type: "unit",
+            id: home_id,
+          },
+          layer_options: {
+            color: "blue",
+            radius: 0.5,
+          },
+          recent_unit_id: home_id,
+          homebound: homebound,
+          next_commute: "work",
+          commuting: false,
+          home_id: home_id,
+          workplace_id: workplace_id,
+          first_go_work_interval: first_go_work_interval,
+          go_work_interval: go_work_interval,
+          go_home_interval: go_home_interval,
+          commute_alarm: first_go_work_interval,
+          infected: false,
+          recovery_tick: 0,
+        },
+        geometry: {
+          type: "Point",
+          coordinates: home_center_coords,
+        },
+      };
+
+      return feature;
+    },
+
+    //Given an agent, define its controller in a way conducive to the epidemic simulation.
+    setAgentController(agent) {
+      //Do the following on each tick of the simulation for the agent.
+      agent.controller = function () {
+        //Do this when the commute_alarm tick is reached.
+        if (!agent.homebound && agent.agentmap.state.ticks !== 0) {
+          if (agent.agentmap.state.ticks % agent.commute_alarm === 0) {
+            if (agent.next_commute === "work") {
+              this.commuteToWork(agent);
+            } else if (agent.next_commute === "home") {
+              this.commuteToHome(agent);
+            }
+
+            //Apply the agentmap's speed control whenever the agent decides to commute.
+            agent.setSpeed(agent.agentmap.speed_controller);
           }
-        )
-        .addTo(mymap);
-    });
+        }
+        //If the agent isn't already scheduled to commute, give it a chance to randomly move around its unit.
+        else if (!agent.commuting) {
+          if (Math.random() < 0.001) {
+            var random_unit_point = agent.agentmap.getUnitPoint(
+              agent.place.id,
+              Math.random(),
+              Math.random()
+            );
+            agent.scheduleTrip(random_unit_point, agent.place, 1);
+          }
+        }
+
+        this.checkCommute(agent);
+        this.updateResidency(agent);
+        this.checkInfection(agent);
+
+        //Have the agent move along its scheduled trip.
+        agent.moveIt();
+      };
+    },
+
+    //Track an agent's transitions between units and update the units' resident_ids array accordingly.
+    updateResidency(agent) {
+      //If the agent is in a unit and came from another place, add its ID to the unit's resident_ids.
+      if (agent.place.type === "unit") {
+        if (agent.place.id !== agent.recent_unit_id) {
+          var current_unit = agent.agentmap.units.getLayer(agent.place.id);
+          current_unit.resident_ids.push(agent._leaflet_id);
+
+          agent.recent_unit_id = agent.place.id;
+        }
+      }
+      //Otherwise, if an agent wasn't just on a street, remove its ID from its recent unit's resident_ids.
+      else if (agent.recent_unit_id !== -1) {
+        var recent_unit = agent.agentmap.units.getLayer(agent.recent_unit_id),
+          agent_resident_index = recent_unit.resident_ids.indexOf(
+            agent._leaflet_id
+          );
+
+        recent_unit.resident_ids.pop(agent_resident_index);
+
+        agent.recent_unit_id = -1;
+      }
+    },
+
+    //Check whether the agent should recover or become infected.
+    checkInfection(agent) {
+      //Check whether the agent is in a unit. If so, if any other agents in the unit are infected,
+      //infect it with a certain probability.
+      if (agent.place.type === "unit" && agent.infected === false) {
+        var resident_ids = agent.agentmap.units.getLayer(
+          agent.place.id
+        ).resident_ids;
+
+        for (var i = 0; i < resident_ids.length; i++) {
+          var resident = agent.agentmap.agents.getLayer(resident_ids[i]);
+          if (resident.infected) {
+            if (Math.random() < agent.agentmap.infection_probability) {
+              this.infectAgent(agent);
+              break;
+            }
+          }
+        }
+      }
+
+      //If the agent is infected, check whether it is time for the agent to recover and if so,
+      //uninfect it.
+      if (
+        agent.infected &&
+        agent.agentmap.state.ticks === agent.recovery_tick
+      ) {
+        this.uninfectAgent(agent);
+      }
+    },
+
+    infectAgent(agent) {
+      (agent.infected = true),
+        //Have the agent recover in a random number of ticks under 2000 from the time it is infected.
+        (agent.recovery_tick =
+          agent.agentmap.state.ticks + Math.floor(Math.random() * 2000));
+      agent.setStyle({ color: "red" });
+
+      agent.agentmap.infected_count++;
+      this.updateEpidemicStats(agent.agentmap);
+    },
+
+    uninfectAgent(agent) {
+      (agent.infected = false), agent.setStyle({ color: "blue" });
+      agent.recoveryTick = -1;
+
+      agent.agentmap.infected_count--;
+      this.updateEpidemicStats(agent.agentmap);
+    },
+
+    //Infect a certain percent of the population, randomly.
+    infect(agentmap, percent) {
+      var number_of_infectees = Math.ceil(agentmap.agents.count() * percent),
+        infectees = this.pick_random_n(
+          agentmap.agents.getLayers(),
+          number_of_infectees
+        );
+      infectees.forEach(function (infectee) {
+        this.infectAgent(infectee);
+      });
+    },
+
+    //Update the numbers in the display boxes in the HTML document.
+    updateEpidemicStats(agentmap) {
+      var infected_display = document.getElementById("infected_value");
+      infected_display.textContent = agentmap.infected_count;
+
+      var healthy_display = document.getElementById("healthy_value");
+      healthy_display.textContent =
+        agentmap.agents.count() - agentmap.infected_count;
+    },
+
+    commuteToWork(agent) {
+      //Schedule the agent to move to a random point in its workplace and replace the currently scheduled trip.
+      var random_workplace_point = agent.agentmap.getUnitPoint(
+        agent.workplace_id,
+        Math.random(),
+        Math.random()
+      );
+      agent.scheduleTrip(
+        random_workplace_point,
+        { type: "unit", id: agent.workplace_id },
+        3,
+        false,
+        true
+      );
+
+      agent.commuting = true;
+      agent.next_commute = "home";
+      agent.commute_alarm += agent.go_home_interval;
+    },
+
+    commuteToHome(agent) {
+      //Schedule the agent to move to a random point in its home and replace the currently scheduled trip.
+      var random_home_point = agent.agentmap.getUnitPoint(
+        agent.home_id,
+        Math.random(),
+        Math.random()
+      );
+      agent.scheduleTrip(
+        random_home_point,
+        { type: "unit", id: agent.home_id },
+        3,
+        false,
+        true
+      );
+
+      agent.commuting = true;
+      agent.next_commute = "work";
+      agent.commute_alarm += agent.go_work_interval;
+    },
+
+    checkCommute(agent) {
+      if (agent.commuting_to === "home" && agent.place.id === agent.home_id) {
+        agent.commuting = false;
+      } else if (
+        agent.commuting_to === "work" &&
+        agent.place.id === agent.workplace_id
+      ) {
+        agent.commuting = false;
+      }
+    },
+
+    //Given an array, return n random elements from it.
+    pick_random_n(array, n) {
+      if (array.length < n) {
+        throw new Error(
+          "n cannot be bigger than the number of elements in the array!"
+        );
+      }
+
+      var random_indices = [];
+
+      for (var i = 0; i < n; i++) {
+        var random_index = Math.floor(Math.random() * array.length);
+        if (!random_indices.includes(random_index)) {
+          random_indices.push(random_index);
+        } else {
+          i--;
+        }
+      }
+
+      var random_n = random_indices.map(function (index) {
+        return array[index];
+      });
+
+      return random_n;
+    },
   },
 };
 </script>
