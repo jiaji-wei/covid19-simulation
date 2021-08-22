@@ -2,321 +2,294 @@
   <Header />
   <section class="bg-bookmark-white py-10">
     <div class="relative mt-20 lg:mt-24">
-      <div
-        class="
-          container
-          flex flex-col
-          lg:flex-row
-          items-center
-          justify-center
-          gap-x-24
-        "
-      >
-        <div
-          class="
-            flex flex-1 flex-row
-            justify-center
-            gap-4
-            z-10
-            mb-10
-            lg:mb-0
-            h-screen
-          "
-        >
+      <div class="container">
+        <div class="flex flex-row justify-center gap-4 z-10 mb-10 lg:mb-0">
           <!-- Map -->
-          <div id="mapid" class="w-1/2 h-1/2"></div>
+          <div id="mapid" class="w-1/2" style="height: 633px"></div>
 
           <!-- Content -->
-          <div class="w-1/2">
-            <div
-              class="
-                flex flex-1 flex-col
-                items-center
-                lg:items-start
-                rounded-lg
-                border-2
-                p-2
-              "
-            >
-              <div class="flex flex-col sm:flex-row items-center">
-                <h2 class="font-semibold text-lg items-centermr-auto">
-                  Controller
-                </h2>
-              </div>
+          <div
+            class="
+              w-1/2
+              flex flex-1 flex-col
+              items-center
+              lg:items-start
+              rounded-lg
+              border-2
+              p-2
+            "
+          >
+            <div class="flex flex-col sm:flex-row items-center">
+              <h2 class="font-semibold text-lg items-centermr-auto">
+                Controller
+              </h2>
+            </div>
 
-              <!-- Country -->
-              <div class="mt-5">
-                <label
-                  for="country"
-                  class="block text-sm font-medium text-gray-700 py-2"
-                >
-                  Country</label
-                >
-                <select
-                  name="country"
-                  id="country"
-                  class="
-                    w-full
-                    border-gray-300
-                    rounded-lg
-                    shadow-sm
-                    focus:border-indigo-500
-                    focus:ring-indigo-500
-                  "
-                >
-                  <option value="">Please Select City</option>
-                  <option value="london1">London</option>
-                  <option value="london2">New York</option>
-                  <option value="london3">Phoenix</option>
-                  <option value="london4">Sydney</option>
-                  <option value="london5">Melbourne</option>
-                </select>
-              </div>
-
-              <!-- Infectivity -->
-              <div class="mt-5">
-                <div class="md:flex flex-row md:space-x-4 w-full text-xs">
-                  <div class="mb-3 w-full text-xs">
-                    <label class="font-semibold text-sm text-gray-600 py-2"
-                      >Infectivity ( 0% ~ 100% )
-                    </label>
-
-                    <input
-                      placeholder="Company Name"
-                      class="
-                        appearance-none
-                        block
-                        w-full
-                        bg-grey-lighter
-                        text-grey-darker
-                        border border-grey-lighter
-                        rounded-lg
-                        mt-3
-                        h-3
-                      "
-                      type="range"
-                      min="1"
-                      max="100"
-                      step="1"
-                      value="15"
-                      id="integration_shop_name"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <!-- Mask -->
-              <div class="mt-5">
-                <div class="flex flex-col sm:flex-row items-center">
-                  <h2 class="font-semibold text-lg mr-auto">Mask</h2>
-                </div>
-                <h2 class="text-gray-500 mt-1 mb-2">
-                  What type mask and percentage of people in use
-                </h2>
-                <div
-                  class="
-                    md:flex md:flex-row
-                    md:space-x-4
-                    w-full
-                    text-xs
-                    p-3
-                    border-2
-                    rounded-lg
-                  "
-                >
-                  <!-- 普通 -->
-                  <div class="w-full flex flex-col mb-3">
-                    <label class="font-semibold text-gray-600 py-2"
-                      >Surgical Mask</label
-                    >
-                    <input
-                      value="0"
-                      class="
-                        appearance-none
-                        block
-                        w-full
-                        bg-grey-lighter
-                        text-grey-darker
-                        border border-grey-lighter
-                        rounded-lg
-                        h-10
-                        px-4
-                      "
-                      type="number"
-                      min="0"
-                      max="100"
-                      name="integration[street_address]"
-                      id="surgical-percentage"
-                    />
-                  </div>
-                  <!-- 手工 -->
-                  <div class="w-full flex flex-col mb-3">
-                    <label class="font-semibold text-gray-600 py-2"
-                      >N95, KN95</label
-                    >
-                    <input
-                      value="0"
-                      class="
-                        appearance-none
-                        block
-                        w-full
-                        bg-grey-lighter
-                        text-grey-darker
-                        border border-grey-lighter
-                        rounded-lg
-                        h-10
-                      "
-                      type="number"
-                      min="0"
-                      max="100"
-                      name="integration[street_address]"
-                      id="95-percentage"
-                    />
-                    <p class="text-sm text-red-500 hidden mt-3" id="error">
-                      Please fill out this field.
-                    </p>
-                  </div>
-                  <!-- kn96 -->
-                  <div class="w-full flex flex-col mb-3">
-                    <label class="font-semibold text-gray-600 py-2"
-                      >Cloth Mask</label
-                    >
-                    <input
-                      value="0"
-                      class="
-                        appearance-none
-                        block
-                        w-full
-                        bg-grey-lighter
-                        text-grey-darker
-                        border border-grey-lighter
-                        rounded-lg
-                        h-10
-                        px-4
-                      "
-                      type="number"
-                      min="0"
-                      max="100"
-                      name="integration[street_address]"
-                      id="cloth-percentage"
-                    />
-                    <p class="text-sm text-red-500 hidden mt-3" id="error">
-                      Please fill out this field.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Policy -->
-              <div class="mt-5">
-                <div class="flex flex-col sm:flex-row items-center">
-                  <h2 class="font-semibold text-lg mr-auto">Policy</h2>
-                </div>
-                <h2 class="text-gray-500 mt-1 mb-2">
-                  Apply Government Response
-                </h2>
-                <div
-                  class="
-                    grid grid-cols-2
-                    gap-4
-                    w-full
-                    mt-3
-                    p-2
-                    border-2
-                    rounded-lg
-                  "
-                >
-                  <div>
-                    <input
-                      type="checkbox"
-                      id="checkbox-school-closing"
-                      class="h-4 w-4 border rounded mr-2"
-                    />
-                    <label for="checkbox-school-closing">School closing</label>
-                  </div>
-                  <div>
-                    <input
-                      type="checkbox"
-                      id="checkbox-workplace-closing"
-                      class="h-4 w-4 border rounded mr-2"
-                    />
-                    <label for="checkbox-workplace-closing"
-                      >Workplace closing</label
-                    >
-                  </div>
-
-                  <div>
-                    <input
-                      type="checkbox"
-                      id="checkbox-gatherings"
-                      class="h-4 w-4 border rounded mr-2"
-                    />
-                    <label for="checkbox-gatherings"
-                      >Restrictions on gatherings</label
-                    >
-                  </div>
-                  <div>
-                    <input
-                      type="checkbox"
-                      id="checkbox-stay"
-                      class="h-4 w-4 border rounded mr-2"
-                    />
-                    <label for="checkbox-stay">Stay at home requirements</label>
-                  </div>
-                </div>
-              </div>
-
-              <!-- button -->
-              <div
+            <!-- Country -->
+            <div class="mt-5">
+              <label
+                for="country"
+                class="block text-sm font-medium text-gray-700 py-2"
+              >
+                Country</label
+              >
+              <select
+                name="country"
+                id="country"
                 class="
-                  mt-5
-                  text-right
-                  md:space-x-3
-                  md:block
-                  flex flex-col-reverse
+                  w-full
+                  border-gray-300
+                  rounded-lg
+                  shadow-sm
+                  focus:border-indigo-500 focus:ring-indigo-500
                 "
               >
-                <button
-                  class="
-                    mb-2
-                    md:mb-0
-                    bg-blue-400
-                    px-5
-                    py-2
-                    text-sm
-                    shadow-sm
-                    font-medium
-                    tracking-wider
-                    text-white
-                    rounded-full
-                    hover:shadow-lg
-                    hover:bg-green-500
-                  "
-                >
-                  Run
-                </button>
+                <option value="">Please Select City</option>
+                <option value="london1">London</option>
+                <option value="london2">New York</option>
+                <option value="london3">Phoenix</option>
+                <option value="london4">Sydney</option>
+                <option value="london5">Melbourne</option>
+              </select>
+            </div>
 
-                <button
-                  class="
-                    mb-2
-                    md:mb-0
-                    bg-white
-                    px-5
-                    py-2
-                    text-sm
-                    shadow-sm
-                    font-medium
-                    tracking-wider
-                    border
-                    text-gray-600
-                    rounded-full
-                    hover:shadow-lg
-                    hover:bg-gray-100
-                  "
-                >
-                  Reset
-                </button>
+            <!-- Infectivity -->
+            <div class="mt-5">
+              <div class="md:flex flex-row md:space-x-4 w-full text-xs">
+                <div class="mb-3 w-full text-xs">
+                  <label class="font-semibold text-sm text-gray-600 py-2"
+                    >Infectivity ( 0% ~ 100% )
+                  </label>
+
+                  <input
+                    placeholder="Company Name"
+                    class="
+                      appearance-none
+                      block
+                      w-full
+                      bg-grey-lighter
+                      text-grey-darker
+                      border border-grey-lighter
+                      rounded-lg
+                      mt-3
+                      h-3
+                    "
+                    type="range"
+                    min="1"
+                    max="100"
+                    step="1"
+                    value="15"
+                    id="integration_shop_name"
+                  />
+                </div>
               </div>
+            </div>
+
+            <!-- Mask -->
+            <div class="mt-5">
+              <div class="flex flex-col sm:flex-row items-center">
+                <h2 class="font-semibold text-lg mr-auto">Mask</h2>
+              </div>
+              <h2 class="text-gray-500 mt-1 mb-2">
+                What type mask and percentage of people in use
+              </h2>
+              <div
+                class="
+                  md:flex md:flex-row md:space-x-4
+                  w-full
+                  text-xs
+                  p-3
+                  border-2
+                  rounded-lg
+                "
+              >
+                <!-- 普通 -->
+                <div class="w-full flex flex-col mb-3">
+                  <label class="font-semibold text-gray-600 py-2"
+                    >Surgical Mask</label
+                  >
+                  <input
+                    value="0"
+                    class="
+                      appearance-none
+                      block
+                      w-full
+                      bg-grey-lighter
+                      text-grey-darker
+                      border border-grey-lighter
+                      rounded-lg
+                      h-10
+                      px-4
+                    "
+                    type="number"
+                    min="0"
+                    max="100"
+                    name="integration[street_address]"
+                    id="surgical-percentage"
+                  />
+                </div>
+                <!-- 手工 -->
+                <div class="w-full flex flex-col mb-3">
+                  <label class="font-semibold text-gray-600 py-2"
+                    >N95, KN95</label
+                  >
+                  <input
+                    value="0"
+                    class="
+                      appearance-none
+                      block
+                      w-full
+                      bg-grey-lighter
+                      text-grey-darker
+                      border border-grey-lighter
+                      rounded-lg
+                      h-10
+                    "
+                    type="number"
+                    min="0"
+                    max="100"
+                    name="integration[street_address]"
+                    id="95-percentage"
+                  />
+                  <p class="text-sm text-red-500 hidden mt-3" id="error">
+                    Please fill out this field.
+                  </p>
+                </div>
+                <!-- kn96 -->
+                <div class="w-full flex flex-col mb-3">
+                  <label class="font-semibold text-gray-600 py-2"
+                    >Cloth Mask</label
+                  >
+                  <input
+                    value="0"
+                    class="
+                      appearance-none
+                      block
+                      w-full
+                      bg-grey-lighter
+                      text-grey-darker
+                      border border-grey-lighter
+                      rounded-lg
+                      h-10
+                      px-4
+                    "
+                    type="number"
+                    min="0"
+                    max="100"
+                    name="integration[street_address]"
+                    id="cloth-percentage"
+                  />
+                  <p class="text-sm text-red-500 hidden mt-3" id="error">
+                    Please fill out this field.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Policy -->
+            <div class="mt-5">
+              <div class="flex flex-col sm:flex-row items-center">
+                <h2 class="font-semibold text-lg mr-auto">Policy</h2>
+              </div>
+              <h2 class="text-gray-500 mt-1 mb-2">Apply Government Response</h2>
+              <div
+                class="
+                  grid grid-cols-2
+                  gap-4
+                  w-full
+                  mt-3
+                  p-2
+                  border-2
+                  rounded-lg
+                "
+              >
+                <div>
+                  <input
+                    type="checkbox"
+                    id="checkbox-school-closing"
+                    class="h-4 w-4 border rounded mr-2"
+                  />
+                  <label for="checkbox-school-closing">School closing</label>
+                </div>
+                <div>
+                  <input
+                    type="checkbox"
+                    id="checkbox-workplace-closing"
+                    class="h-4 w-4 border rounded mr-2"
+                  />
+                  <label for="checkbox-workplace-closing"
+                    >Workplace closing</label
+                  >
+                </div>
+
+                <div>
+                  <input
+                    type="checkbox"
+                    id="checkbox-gatherings"
+                    class="h-4 w-4 border rounded mr-2"
+                  />
+                  <label for="checkbox-gatherings"
+                    >Restrictions on gatherings</label
+                  >
+                </div>
+                <div>
+                  <input
+                    type="checkbox"
+                    id="checkbox-stay"
+                    class="h-4 w-4 border rounded mr-2"
+                  />
+                  <label for="checkbox-stay">Stay at home requirements</label>
+                </div>
+              </div>
+            </div>
+
+            <!-- button -->
+            <div
+              class="
+                mt-5
+                text-right
+                md:space-x-3 md:block
+                flex flex-col-reverse
+              "
+            >
+              <button
+                class="
+                  mb-2
+                  md:mb-0
+                  bg-blue-400
+                  px-5
+                  py-2
+                  text-sm
+                  shadow-sm
+                  font-medium
+                  tracking-wider
+                  text-white
+                  rounded-full
+                  hover:shadow-lg hover:bg-green-500
+                "
+              >
+                Run
+              </button>
+
+              <button
+                class="
+                  mb-2
+                  md:mb-0
+                  bg-white
+                  px-5
+                  py-2
+                  text-sm
+                  shadow-sm
+                  font-medium
+                  tracking-wider
+                  border
+                  text-gray-600
+                  rounded-full
+                  hover:shadow-lg hover:bg-gray-100
+                "
+              >
+                Reset
+              </button>
             </div>
           </div>
         </div>
@@ -376,16 +349,16 @@ export default {
         maxZoom: 18,
       }).addTo(map);
 
-      self.agentmap = L.A.agentmap(map);
+      this.agentmap = L.A.agentmap(map);
 
       console.log("init map....");
-      console.log(self.agentMap);
+      console.log(this.agentmap);
     },
 
     setupSim() {
       //Generate and display streets and units on the map.
       //Load the units from units_data instead of generating them from scratch to speed things up.
-      self.agentmap.buildingify(
+      this.agentmap.buildingify(
         this.leafletbounding_box,
         map_data,
         undefined,
@@ -402,55 +375,55 @@ export default {
           "Clymer Lane",
         ],
         commercial_streets = ["Heyward Place", "Heyward Drive", "Hooper Place"];
-      self.agentmap.zoned_units = this.getZonedUnits(
-        self.agentmap,
+      this.agentmap.zoned_units = this.getZonedUnits(
+        this.agentmap,
         residential_streets,
         commercial_streets
       );
 
       //Use only a subset of the zoned units.
-      (self.agentmap.zoned_units.residential = this.pick_random_n(
-        self.agentmap.zoned_units.residential,
+      (this.agentmap.zoned_units.residential = this.pick_random_n(
+        this.agentmap.zoned_units.residential,
         100
       )),
-        (self.agentmap.zoned_units.commercial = this.pick_random_n(
-          self.agentmap.zoned_units.commercial,
+        (this.agentmap.zoned_units.commercial = this.pick_random_n(
+          this.agentmap.zoned_units.commercial,
           20
         ));
 
       //Generate 200 agents according to the rules of epidemicAgentMaker, displaying them as blue, .5 meter radius circles.
-      self.agentmap.agentify(300, this.epidemicAgentMaker);
+      this.agentmap.agentify(300, this.epidemicAgentMaker.bind(this));
 
       //Attach a popup to show when any agent is clicked.
-      self.agentmap.agents.bindPopup(this.agentPopupMaker);
+      this.agentmap.agents.bindPopup(this.agentPopupMaker);
 
       //Keep a count of how many infected agents there are.
-      self.agentmap.infected_count = 0;
+      this.agentmap.infected_count = 0;
 
       //Set how infectious the disease is (the probability that someone nearby will get infected)
-      self.agentmap.infection_probability = 0.00001;
+      this.agentmap.infection_probability = 0.00001;
 
       //Set the default speed for the agent.
-      self.agentmap.speed_controller = 3;
+      this.agentmap.speed_controller = 3;
 
       //Do the following on each tick of the simulation.
-      self.agentmap.controller = this.agentmapController;
+      this.agentmap.controller = this.agentmapController;
 
       //Set each Agent up.
-      self.agentmap.agents.eachLayer(function (agent) {
+      this.agentmap.agents.eachLayer((agent) => {
         //Add the agent's ID to its home unit's resident_ids array to help keep track of which agents are in the same unit.
-        var home_unit = self.agentmap.units.getLayer(agent.home_id);
+        var home_unit = this.agentmap.units.getLayer(agent.home_id);
         home_unit.resident_ids.push(agent._leaflet_id);
 
         //Define the update_func for the agent.
-        self.setAgentController(agent);
+        this.setAgentController(agent);
       });
 
       //Infect a random 10% of the population on the agentmap.
-      self.infect(this.agentmap, 0.1);
+      this.infect(this.agentmap, 0.1);
 
       //Set the data displays and input options in the interface to their default values.
-      self.defaultInterface();
+      this.defaultInterface();
     },
 
     /*                                                 */
@@ -459,11 +432,10 @@ export default {
 
     //Set the elements of the interface to their default values.
     defaultInterface() {
-      (this.speed_controller_input.value = this.agentmap.speed_controller),
-        (this.infection_probability_input.value =
-          this.agentmap.infection_probability),
-        (this.animation_interval_input.value = 5),
-        (this.ticks_display.textContent = "");
+      this.speed_controller_input = this.agentmap.speed_controller;
+      this.infection_probability_input = this.agentmap.infection_probability;
+      this.animation_interval_input = 5;
+      this.ticks_display = "";
     },
 
     //Given an agent, return an HTML string to embed in a popup.
@@ -487,9 +459,9 @@ export default {
 
       //Find and store the units on the perimeter of the lower part of the neighborhood,
       //and along the streets in the upper part of the neighborhood.
-      self.agentmap.units.eachLayer(function (unit) {
+      agentmap.units.eachLayer(function (unit) {
         var street_id = unit.street_id,
-          street = self.agentmap.streets.getLayer(street_id),
+          street = agentmap.streets.getLayer(street_id),
           street_name = street.feature.properties.name;
 
         if (residential_streets.includes(street_name)) {
@@ -510,7 +482,7 @@ export default {
     //The controller  for the Agentmap.
     agentmapController() {
       //Set the tick display box to display the number of the current tick.
-      this.ticks_display.textContent = this.agentmap.state.ticks;
+      this.ticks_display = this.agentmap.state.ticks;
 
       //Check if any of the options have been changed in the interface and update the Agentmap accordingly.
       if (
@@ -550,10 +522,10 @@ export default {
 
       //Get a random residential unit and its center.
       var random_residential_index = Math.floor(
-          Math.random() * self.agentmap.zoned_units.residential.length
+          Math.random() * this.agentmap.zoned_units.residential.length
         ),
         random_residential_unit_id =
-          self.agentmap.zoned_units.residential[random_residential_index];
+          this.agentmap.zoned_units.residential[random_residential_index];
 
       //Store the residential unit's ID as the agent's home ID.
       var home_id = random_residential_unit_id;
@@ -566,10 +538,10 @@ export default {
       if (!homebound) {
         //Get a random commercial unit and its ID.
         var random_workplace_index = Math.floor(
-            self.agentmap.zoned_units.commercial.length * Math.random()
+            this.agentmap.zoned_units.commercial.length * Math.random()
           ),
           random_workplace_id =
-            self.agentmap.zoned_units.commercial[random_workplace_index];
+            this.agentmap.zoned_units.commercial[random_workplace_index];
 
         //Store the commercial unit's ID as the agent's workplace ID.
         workplace_id = random_workplace_id;
@@ -592,7 +564,7 @@ export default {
       }
 
       //Get the agent's starting position.
-      var home_unit = self.agentmap.units.getLayer(home_id),
+      var home_unit = this.agentmap.units.getLayer(home_id),
         home_center_coords = L.A.pointToCoordinateArray(home_unit.getCenter());
 
       var feature = {
@@ -746,19 +718,18 @@ export default {
           agentmap.agents.getLayers(),
           number_of_infectees
         );
-      infectees.forEach(function (infectee) {
+      infectees.forEach((infectee) => {
         this.infectAgent(infectee);
       });
     },
 
     //Update the numbers in the display boxes in the HTML document.
-    updateEpidemicStats(agentmap) {
-      var infected_display = document.getElementById("infected_value");
-      infected_display.textContent = agentmap.infected_count;
-
-      var healthy_display = document.getElementById("healthy_value");
-      healthy_display.textContent =
-        agentmap.agents.count() - agentmap.infected_count;
+    updateEpidemicStats(/* agentmap */) {
+      // var infected_display = document.getElementById("infected_value");
+      // infected_display.textContent = agentmap.infected_count;
+      // var healthy_display = document.getElementById("healthy_value");
+      // healthy_display.textContent =
+      //   agentmap.agents.count() - agentmap.infected_count;
     },
 
     commuteToWork(agent) {
