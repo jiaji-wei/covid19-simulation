@@ -24,34 +24,32 @@
                 Controller
               </h2>
             </div>
-
-            <!-- Country -->
+            <!-- Statistics -->
             <div class="mt-5">
-              <label
-                for="country"
-                class="block text-sm font-medium text-gray-700 py-2"
-              >
-                Country</label
-              >
-              <select
-                name="country"
-                id="country"
+              <h1 class="text-sm font-medium text-gray-700 py-2">Statistics</h1>
+              <div
                 class="
+                  md:flex md:flex-row
+                  md:space-x-4
                   w-full
-                  border-gray-300
+                  text-xs
+                  p-3
+                  border-2
                   rounded-lg
-                  shadow-sm
-                  focus:border-indigo-500
-                  focus:ring-indigo-500
                 "
               >
-                <option value="">Please Select City</option>
-                <option value="london1">London</option>
-                <option value="london2">New York</option>
-                <option value="london3">Phoenix</option>
-                <option value="london4">Sydney</option>
-                <option value="london5">Melbourne</option>
-              </select>
+                <div>
+                  <h2 class="text-black mt-1 mb-2 w-full flex flex-col">
+                    Ticks: {{ ticks_display }}
+                  </h2>
+                  <h2 class="text-green-500 mt-1 mb-2 w-full flex flex-col">
+                    Healthy Residents: {{ healthy_display }}
+                  </h2>
+                  <h2 class="text-red-400 mt-1 mb-2 w-full flex flex-col">
+                    Infected Residents: {{ infected_display }}
+                  </h2>
+                </div>
+              </div>
             </div>
 
             <!-- Infectivity -->
@@ -59,11 +57,11 @@
               <div class="md:flex flex-row md:space-x-4 w-full text-xs">
                 <div class="mb-3 w-full text-xs">
                   <label class="font-semibold text-sm text-gray-600 py-2"
-                    >Infectivity ( 0% ~ 100% )
+                    >Infectivity ( 0% ~ 1% )
                   </label>
 
                   <input
-                  v-model="infection_probability_input"
+                    v-model="infection_probability_input"
                     class="
                       appearance-none
                       block
@@ -76,8 +74,8 @@
                       h-3
                     "
                     type="range"
-                    min="0"
-                    max=".006"
+                    min=".00001"
+                    max=".01"
                     step=".00001"
                   />
                 </div>
@@ -92,7 +90,7 @@
               <h2 class="text-gray-500 mt-1 mb-2">
                 What type mask and percentage of people in use
               </h2>
-              <h2 class="text-red-500 mt-1 mb-2">{{err_msg}}</h2>
+              <h2 class="text-red-500 mt-1 mb-2">{{ err_msg }}</h2>
               <div
                 class="
                   md:flex md:flex-row
@@ -148,6 +146,7 @@
                     type="number"
                     min="0"
                     max="100"
+                    @blur="checkPercentage"
                   />
                   <p class="text-sm text-red-500 hidden mt-3" id="error">
                     Please fill out this field.
@@ -174,6 +173,7 @@
                     type="number"
                     min="0"
                     max="100"
+                    @blur="checkPercentage"
                   />
                   <p class="text-sm text-red-500 hidden mt-3" id="error">
                     Please fill out this field.
@@ -187,7 +187,9 @@
               <div class="flex flex-col sm:flex-row items-center">
                 <h2 class="font-semibold text-lg mr-auto">Policy</h2>
               </div>
-              <h2 class="text-gray-500 mt-1 mb-2">Apply Government Response</h2>
+              <h2 class="text-gray-500 mt-1 mb-2">
+                Apply Government Policy in Simulation
+              </h2>
               <div
                 class="
                   grid grid-cols-2
@@ -204,7 +206,8 @@
                     type="checkbox"
                     v-model="school_closing"
                     class="h-4 w-4 border rounded mr-2"
-                    id = "school_closing"
+                    id="school_closing"
+                    true-value="true" false-value="false"
                   />
                   <label for="school_closing">School closing</label>
                 </div>
@@ -213,11 +216,10 @@
                     type="checkbox"
                     v-model="workplace_closing"
                     class="h-4 w-4 border rounded mr-2"
-                    id = "workplace_closing"
+                    id="workplace_closing"
+                    true-value="true" false-value="false"
                   />
-                  <label for="workplace_closing"
-                    >Workplace closing</label
-                  >
+                  <label for="workplace_closing">Workplace closing</label>
                 </div>
 
                 <div>
@@ -226,10 +228,9 @@
                     v-model="gatherings"
                     class="h-4 w-4 border rounded mr-2"
                     id="gatherings"
+                    true-value="true" false-value="false"
                   />
-                  <label for="gatherings"
-                    >Restrictions on gatherings</label
-                  >
+                  <label for="gatherings">Restrictions on gatherings</label>
                 </div>
                 <div>
                   <input
@@ -237,6 +238,7 @@
                     v-model="stay_at_home"
                     class="h-4 w-4 border rounded mr-2"
                     id="stay_at_home"
+                    true-value="true" false-value="false"
                   />
                   <label for="stay_at_home">Stay at home requirements</label>
                 </div>
@@ -307,10 +309,6 @@ import "./../static/agentmaps.js";
 
 import Header from "../components/Header.vue";
 
-// import streets_data from "./../static/street_features.json";
-// import units_data from "./../static/unit_features.json";
-// import map_data from "./../static/map_data.json";
-
 import streets_data from "./../static/map/london/streets_data.json";
 import units_data from "./../static/map/london/units_data.json";
 import map_data from "./../static/map/london/center_london.json";
@@ -328,6 +326,8 @@ export default {
       speed_controller_input: 1,
       infection_probability_input: 0.00001,
       ticks_display: "",
+      infected_display: "",
+      healthy_display: "",
       animation_interval_map: { 1: 0, 2: 1000, 3: 100, 4: 10, 5: 1 },
       bounding_box: [
         [39.9058, -86.091],
@@ -337,19 +337,22 @@ export default {
       unit_type_chance: [],
       residential_streets: [],
       commercial_streets: [],
+
       surgical_percentage: 0,
       kn_percentage: 0,
       cloth_percentage: 0,
-      school_closing: 0,
-      workplace_closing: 0,
-      gatherings: 0,
-      stay_at_home: 0,
+
+      school_closing: "false",
+      workplace_closing: "false",
+      gatherings: "false",
+      stay_at_home: "false",
+
       err_msg: "",
     };
   },
   mounted() {
     this.initMap();
-    // this.setupSim();
+    this.setupSim();
   },
   methods: {
     initMap() {
@@ -480,7 +483,15 @@ export default {
 
       string += "BuildingType: " + unit.unit_type + "</br>";
 
-      string += "Status: " + "closing";
+      if (unit.unit_type === "Home") {
+        string += this.stay_at_home === "true" ? "Status: close" : "Status: open";
+      } else if (unit.unit_type === "Workplace") {
+        string += this.workplace_closing === "true"?"Status: close" : "Status: open";
+      } else if (unit.unit_type === "Public Area") {
+        string += this.gatherings === "true"?"Status: close" : "Status: open";
+      } else if (unit.unit_type === "School") {
+        string += this.school_closing === "true"?"Status: close" : "Status: open";
+      }
 
       return string;
     },
@@ -742,7 +753,7 @@ export default {
       (agent.infected = true),
         //Have the agent recover in a random number of ticks under 2000 from the time it is infected.
         (agent.recovery_tick =
-          agent.agentmap.state.ticks + Math.floor(Math.random() * 2000));
+          agent.agentmap.state.ticks + Math.floor(Math.random() * 20000));
       agent.setStyle({ color: "red" });
 
       agent.agentmap.infected_count++;
@@ -770,12 +781,9 @@ export default {
     },
 
     //Update the numbers in the display boxes in the HTML document.
-    updateEpidemicStats(/* agentmap */) {
-      // var infected_display = document.getElementById("infected_value");
-      // infected_display.textContent = agentmap.infected_count;
-      // var healthy_display = document.getElementById("healthy_value");
-      // healthy_display.textContent =
-      //   agentmap.agents.count() - agentmap.infected_count;
+    updateEpidemicStats(agentmap) {
+      this.infected_display = agentmap.infected_count;
+      this.healthy_display = agentmap.agents.count() - agentmap.infected_count;
     },
 
     commuteToWork(agent) {
@@ -865,10 +873,13 @@ export default {
       return null;
     },
 
-    checkPercentage: function(){
-      if(this.surgical_percentage + this.kn_percentage + this.cloth_percentage > 100){
-          this.err_msg = "* sum of three percentage must blow 100";
-      }else{
+    checkPercentage: function () {
+      if (
+        this.surgical_percentage + this.kn_percentage + this.cloth_percentage >
+        100
+      ) {
+        this.err_msg = "* sum of three percentage must blow 100";
+      } else {
         this.err_msg = "";
       }
     },
