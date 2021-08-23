@@ -207,7 +207,8 @@
                     v-model="school_closing"
                     class="h-4 w-4 border rounded mr-2"
                     id="school_closing"
-                    true-value="true" false-value="false"
+                    true-value="true"
+                    false-value="false"
                   />
                   <label for="school_closing">School closing</label>
                 </div>
@@ -217,7 +218,8 @@
                     v-model="workplace_closing"
                     class="h-4 w-4 border rounded mr-2"
                     id="workplace_closing"
-                    true-value="true" false-value="false"
+                    true-value="true"
+                    false-value="false"
                   />
                   <label for="workplace_closing">Workplace closing</label>
                 </div>
@@ -228,7 +230,8 @@
                     v-model="gatherings"
                     class="h-4 w-4 border rounded mr-2"
                     id="gatherings"
-                    true-value="true" false-value="false"
+                    true-value="true"
+                    false-value="false"
                   />
                   <label for="gatherings">Restrictions on gatherings</label>
                 </div>
@@ -238,7 +241,8 @@
                     v-model="stay_at_home"
                     class="h-4 w-4 border rounded mr-2"
                     id="stay_at_home"
-                    true-value="true" false-value="false"
+                    true-value="true"
+                    false-value="false"
                   />
                   <label for="stay_at_home">Stay at home requirements</label>
                 </div>
@@ -484,13 +488,16 @@ export default {
       string += "BuildingType: " + unit.unit_type + "</br>";
 
       if (unit.unit_type === "Home") {
-        string += this.stay_at_home === "true" ? "Status: close" : "Status: open";
+        string +=
+          this.stay_at_home === "true" ? "Status: close" : "Status: open";
       } else if (unit.unit_type === "Workplace") {
-        string += this.workplace_closing === "true"?"Status: close" : "Status: open";
+        string +=
+          this.workplace_closing === "true" ? "Status: close" : "Status: open";
       } else if (unit.unit_type === "Public Area") {
-        string += this.gatherings === "true"?"Status: close" : "Status: open";
+        string += this.gatherings === "true" ? "Status: close" : "Status: open";
       } else if (unit.unit_type === "School") {
-        string += this.school_closing === "true"?"Status: close" : "Status: open";
+        string +=
+          this.school_closing === "true" ? "Status: close" : "Status: open";
       }
 
       return string;
@@ -787,6 +794,9 @@ export default {
     },
 
     commuteToWork(agent) {
+      if (this.workplace_closing === "true") {
+        return;
+      }
       //Schedule the agent to move to a random point in its workplace and replace the currently scheduled trip.
       var random_workplace_point = agent.agentmap.getUnitPoint(
         agent.workplace_id,
