@@ -4,9 +4,8 @@
     <div class="sm:w-3/4 lg:w-5/12 mx-auto px-2">
       <h1 class="text-3xl text-center text-bookmark-blue">Features</h1>
       <p class="text-center text-bookmark-grey mt-4">
-        Our aim is to make it quick and easy for you to access your favourite
-        websites. Your bookmarks sync between your devices so you can access
-        them on the go.
+        Our aim is to make it quick and easy for you to simulat Covid-19
+         with different situation at different citys.
       </p>
     </div>
     <!-- Feature #1 -->
@@ -30,7 +29,7 @@
         </div>
         <!-- Content -->
         <div class="flex flex-1 flex-col items-center lg:items-start">
-          <h1 class="text-3xl text-bookmark-blue">Bookmark in one click</h1>
+          <h1 class="text-3xl text-bookmark-blue">Different Type Masks</h1>
           <p
             class="
               text-bookmark-grey
@@ -45,12 +44,7 @@
             interface gives you complete control over how you manage your
             favourite sites.
           </p>
-          <button
-            type="button"
-            class="btn btn-purple hover:bg-bookmark-white hover:text-black"
-          >
-            More Info
-          </button>
+         
         </div>
       </div>
       <div
@@ -90,7 +84,7 @@
         </div>
         <!-- Content -->
         <div class="flex flex-1 flex-col items-center lg:items-start">
-          <h1 class="text-3xl text-bookmark-blue">Intelligent search</h1>
+          <h1 class="text-3xl text-bookmark-blue">Public Polcy Simulat</h1>
           <p
             class="
               text-bookmark-grey
@@ -104,12 +98,7 @@
             Our powerful search feature will help you find saved sites in no
             time at all. No need to crawl through all of your bookmarks.
           </p>
-          <button
-            type="button"
-            class="btn btn-purple hover:bg-bookmark-white hover:text-black"
-          >
-            More Info
-          </button>
+          
         </div>
       </div>
       <!-- Rounded Rectangle -->
@@ -151,7 +140,7 @@
         </div>
         <!-- Content -->
         <div class="flex flex-1 flex-col items-center lg:items-start">
-          <h1 class="text-3xl text-bookmark-blue">Share your bookmarks</h1>
+          <h1 class="text-3xl text-bookmark-blue">Commut in Different Environment</h1>
           <p
             class="
               text-bookmark-grey
@@ -165,12 +154,7 @@
             Easily share your bookmarks and collections with others. Create a
             shareable link that you can send at the click of a button.
           </p>
-          <button
-            type="button"
-            class="btn btn-purple hover:bg-bookmark-white hover:text-black"
-          >
-            More Info
-          </button>
+          
         </div>
       </div>
       <!-- Rounded Rectangle -->
