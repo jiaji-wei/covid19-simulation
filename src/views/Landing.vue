@@ -6,7 +6,7 @@
     <City />
     <Faq />
     <Contact />
-    <Footer />
+    <!-- <Footer /> -->
     <div class="container"></div>
   </div>
 </template>
@@ -18,7 +18,7 @@ import Features from "../components/Features.vue";
 import City from "../components/City.vue";
 import Faq from "../components/Faq.vue";
 import Contact from "../components/Contact.vue";
-import Footer from "../components/Footer.vue";
+// import Footer from "../components/Footer.vue";
 
 export default {
   name: "Landing",
@@ -29,7 +29,7 @@ export default {
     City,
     Faq,
     Contact,
-    Footer,
+    // Footer,
   },
 };
 </script>
