@@ -3,7 +3,7 @@
     <Header />
     <Hero />
     <Features />
-    <Download />
+    <City />
     <Faq />
     <Contact />
     <Footer />
@@ -15,7 +15,7 @@
 import Header from "../components/Header.vue";
 import Hero from "../components/Hero.vue";
 import Features from "../components/Features.vue";
-import Download from "../components/Download.vue";
+import City from "../components/City.vue";
 import Faq from "../components/Faq.vue";
 import Contact from "../components/Contact.vue";
 import Footer from "../components/Footer.vue";
@@ -26,7 +26,7 @@ export default {
     Header,
     Hero,
     Features,
-    Download,
+    City,
     Faq,
     Contact,
     Footer,

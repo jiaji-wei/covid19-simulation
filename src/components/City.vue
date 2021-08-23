@@ -4,11 +4,10 @@
     <!-- Heading -->
     <div class="sm:w-3/4 lg:w-5/12 mx-auto px-2">
       <h1 class="text-3xl text-center text-bookmark-blue">
-        Download the extension
+        Simulat in Citys
       </h1>
       <p class="text-center text-bookmark-grey mt-4">
-        We’ve got more browsers in the pipeline. Please do let us know if you’ve
-        got a favourite you’d like us to prioritize.
+        We’ve got 5 citys in the website. Please do let us know if you want get another city simulation.
       </p>
     </div>
     <!-- Cards -->
@@ -17,18 +16,16 @@
         container
         grid grid-cols-1
         md:grid-cols-2
-        lg:grid-cols-3
-        gap-16
+        lg:grid-cols-5
+        gap-6
         max-w-screen-lg
         mt-16
       "
     >
       <!-- Card 1 -->
-      <div class="flex flex-col rounded-md shadow-md lg:mb-16">
+      <div class="flex flex-col rounded-md shadow-md">
         <div class="p-6 flex flex-col items-center">
-          <img src="./../imgs/logo-chrome.svg" alt="" />
-          <h3 class="mt-5 mb-2 text-bookmark-blue text-lg">Add to Chrome</h3>
-          <p class="mb-2 text-bookmark-grey font-light">Minimum version 62</p>
+          <h3 class="mt-5 mb-2 text-bookmark-blue text-lg">London</h3>
         </div>
         <hr class="border-b border-bookmark-white" />
         <div class="flex p-6">
@@ -41,16 +38,14 @@
               hover:text-black
             "
           >
-            Add & Install Extension
+            Lunch App
           </button>
         </div>
       </div>
       <!-- Card 2 -->
-      <div class="flex flex-col rounded-md shadow-md lg:my-8">
+      <div class="flex flex-col rounded-md shadow-md">
         <div class="p-6 flex flex-col items-center">
-          <img src="./../imgs/logo-firefox.svg" alt="" />
-          <h3 class="mt-5 mb-2 text-bookmark-blue text-lg">Add to Firefox</h3>
-          <p class="mb-2 text-bookmark-grey font-light">Minimum version 62</p>
+          <h3 class="mt-5 mb-2 text-bookmark-blue text-lg">New Yourk</h3>
         </div>
         <hr class="border-b border-bookmark-white" />
         <div class="flex p-6">
@@ -63,16 +58,14 @@
               hover:text-black
             "
           >
-            Add & Install Extension
+            Lunch App
           </button>
         </div>
       </div>
       <!-- Card 3 -->
-      <div class="flex flex-col rounded-md shadow-md lg:mt-16">
+      <div class="flex flex-col rounded-md shadow-md">
         <div class="p-6 flex flex-col items-center">
-          <img src="./../imgs/logo-opera.svg" alt="" />
-          <h3 class="mt-5 mb-2 text-bookmark-blue text-lg">Add to Opera</h3>
-          <p class="mb-2 text-bookmark-grey font-light">Minimum version 62</p>
+          <h3 class="mt-5 mb-2 text-bookmark-blue text-lg">Phoenix</h3>
         </div>
         <hr class="border-b border-bookmark-white" />
         <div class="flex p-6">
@@ -85,7 +78,47 @@
               hover:text-black
             "
           >
-            Add & Install Extension
+            Lunch App
+          </button>
+        </div>
+      </div>
+      <!-- Card 4 -->
+      <div class="flex flex-col rounded-md shadow-md">
+        <div class="p-6 flex flex-col items-center">
+          <h3 class="mt-5 mb-2 text-bookmark-blue text-lg">Sydney</h3>
+        </div>
+        <hr class="border-b border-bookmark-white" />
+        <div class="flex p-6">
+          <button
+            type="button"
+            class="
+              flex-1
+              btn btn-purple
+              hover:bg-bookmark-white
+              hover:text-black
+            "
+          >
+            Lunch App
+          </button>
+        </div>
+      </div>
+      <!-- Card 3 -->
+      <div class="flex flex-col rounded-md shadow-md">
+        <div class="p-6 flex flex-col items-center">
+          <h3 class="mt-5 mb-2 text-bookmark-blue text-lg">Melbourne</h3>
+        </div>
+        <hr class="border-b border-bookmark-white" />
+        <div class="flex p-6">
+          <button
+            type="button"
+            class="
+              flex-1
+              btn btn-purple
+              hover:bg-bookmark-white
+              hover:text-black
+            "
+          >
+            Lunch App
           </button>
         </div>
       </div>
@@ -95,7 +128,7 @@
 
 <script>
 export default {
-  name: "Download",
+  name: "City",
   components: {},
 };
 </script>

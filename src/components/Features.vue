@@ -40,9 +40,7 @@
               lg:w-full
             "
           >
-            Organize your bookmarks however you like. Our simple drag-and-drop
-            interface gives you complete control over how you manage your
-            favourite sites.
+            You can choose any percentrage mask in use, such as surgical mask, N95, KN95 or cloth mask.
           </p>
          
         </div>
@@ -95,8 +93,7 @@
               lg:w-full
             "
           >
-            Our powerful search feature will help you find saved sites in no
-            time at all. No need to crawl through all of your bookmarks.
+            Apply school closing, workplace closing or require all agents stay at home.
           </p>
           
         </div>
@@ -140,7 +137,7 @@
         </div>
         <!-- Content -->
         <div class="flex flex-1 flex-col items-center lg:items-start">
-          <h1 class="text-3xl text-bookmark-blue">Commut in Different Environment</h1>
+          <h1 class="text-3xl text-bookmark-blue">Commute in Different Environment</h1>
           <p
             class="
               text-bookmark-grey
@@ -151,8 +148,7 @@
               lg:w-full
             "
           >
-            Easily share your bookmarks and collections with others. Create a
-            shareable link that you can send at the click of a button.
+            Agent can commute at home, workplace or other environment.
           </p>
           
         </div>
