@@ -3,9 +3,6 @@
   <section class="bg-bookmark-purple text-white py-20">
     <div class="container">
       <div class="sm:w-3/4 lg:w-2/4 mx-auto">
-        <p class="font-light uppercase text-center mb-8">
-          35,000+ ALREADY JOINED
-        </p>
         <h1 class="text-3xl text-center">
           Stay up-to-date with what we’re doing
         </h1>

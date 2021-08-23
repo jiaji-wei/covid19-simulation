@@ -1,6 +1,6 @@
 <template>
   <nav class="container flex items-center py-4 mt-4 sm:mt-12">
-    <div class="py-1"><img src="./../assets/logo-bookmark.svg" /></div>
+    <div class="py-1 text-blue-500 text-xl md:text-3xl font-bold mb-3"><i class="fa fa-viruses"></i> Covid-19 Simulation</div>
     <ul
       class="
         hidden
@@ -14,13 +14,9 @@
         text-xs
       "
     >
-      <li class="cursor-pointer">Features</li>
-      <li class="cursor-pointer"><router-link to="/app">London</router-link></li>
-      <li class="cursor-pointer"><router-link to="/app">New Yourk</router-link></li>
-      <li class="cursor-pointer"><router-link to="/app">Phoenix</router-link></li>
-      <li class="cursor-pointer"><router-link to="/app">Sydney</router-link></li>
-      <li class="cursor-pointer"><router-link to="/app">Melbourne</router-link></li>
-      <li class="cursor-pointer">Contact</li>
+      <li class="cursor-pointer font-bold">Features</li>
+      <li class="cursor-pointer font-bold">Cities</li>
+      <li class="cursor-pointer font-bold">Contact</li>
      
     </ul>
     <div class="flex sm:hidden flex-1 justify-end">
