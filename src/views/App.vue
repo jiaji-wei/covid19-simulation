@@ -794,7 +794,38 @@ export default {
     },
 
     commuteToWork(agent) {
-      if (this.workplace_closing === "true") {
+      var workplace = this.agentmap.units.getLayer(agent.workplace_id);
+
+      if (workplace.unit_type == "school" && this.school_closing === "true") {
+        return;
+      } else if (
+        workplace.unit_type == "workplace" &&
+        this.workplace_closing === "true"
+      ) {
+        return;
+      }
+
+      //Schedule the agent to move to a random point in its workplace and replace the currently scheduled trip.
+      var random_workplace_point = agent.agentmap.getUnitPoint(
+        agent.workplace_id,
+        Math.random(),
+        Math.random()
+      );
+      agent.scheduleTrip(
+        random_workplace_point,
+        { type: "unit", id: agent.workplace_id },
+        3,
+        false,
+        true
+      );
+
+      agent.commuting = true;
+      agent.next_commute = "home";
+      agent.commute_alarm += agent.go_home_interval;
+    },
+
+    commuteToPublic(agent) {
+      if (this.gatherings === "true") {
         return;
       }
       //Schedule the agent to move to a random point in its workplace and replace the currently scheduled trip.
