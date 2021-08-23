@@ -63,7 +63,7 @@
                   </label>
 
                   <input
-                    placeholder="Company Name"
+                  v-model="infection_probability_input"
                     class="
                       appearance-none
                       block
@@ -76,13 +76,12 @@
                       h-3
                     "
                     type="range"
-                    min="1"
-                    max="100"
-                    step="1"
-                    value="15"
-                    id="integration_shop_name"
+                    min="0"
+                    max=".006"
+                    step=".00001"
                   />
                 </div>
+                <p>{{infection_probability_input}}</p>
               </div>
             </div>
 
@@ -313,7 +312,6 @@ import Header from "../components/Header.vue";
 // import units_data from "./../static/unit_features.json";
 // import map_data from "./../static/map_data.json";
 
-
 import streets_data from "./../static/map/london/streets_data.json";
 import units_data from "./../static/map/london/units_data.json";
 import map_data from "./../static/map/london/center_london.json";
@@ -338,13 +336,13 @@ export default {
       ],
       unit_type: [],
       unit_type_chance: [],
-      residential_streets: [], 
+      residential_streets: [],
       commercial_streets: [],
     };
   },
   mounted() {
     this.initMap();
-    this.setupSim();
+    // this.setupSim();
   },
   methods: {
     initMap() {
@@ -368,7 +366,6 @@ export default {
       this.agentmap = L.A.agentmap(map);
       this.animation_interval_input = 5;
       this.speed_controller_input = 5;
-      this.infection_probability_input = 0.01;
       this.unit_type = ["School", "Public Area", "Workplace", "Home"];
       this.unit_type_chance = [0.1, 0.2, 0.3, 0.4];
       this.residential_streets = sereet.residential_streets;
@@ -392,9 +389,7 @@ export default {
       );
 
       //Split the map's units into residential and commercial zones.
-  
-      
-      
+
       this.agentmap.zoned_units = this.getZonedUnits(
         this.agentmap,
         this.residential_streets,
