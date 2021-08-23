@@ -81,7 +81,6 @@
                     step=".00001"
                   />
                 </div>
-                <p>{{infection_probability_input}}</p>
               </div>
             </div>
 
@@ -93,6 +92,7 @@
               <h2 class="text-gray-500 mt-1 mb-2">
                 What type mask and percentage of people in use
               </h2>
+              <h2 class="text-red-500 mt-1 mb-2">{{err_msg}}</h2>
               <div
                 class="
                   md:flex md:flex-row
@@ -110,7 +110,7 @@
                     >Surgical Mask</label
                   >
                   <input
-                    value="0"
+                    v-model="surgical_percentage"
                     class="
                       appearance-none
                       block
@@ -125,8 +125,7 @@
                     type="number"
                     min="0"
                     max="100"
-                    name="integration[street_address]"
-                    id="surgical-percentage"
+                    @blur="checkPercentage"
                   />
                 </div>
                 <!-- 手工 -->
@@ -135,7 +134,7 @@
                     >N95, KN95</label
                   >
                   <input
-                    value="0"
+                    v-model="kn_percentage"
                     class="
                       appearance-none
                       block
@@ -149,8 +148,6 @@
                     type="number"
                     min="0"
                     max="100"
-                    name="integration[street_address]"
-                    id="95-percentage"
                   />
                   <p class="text-sm text-red-500 hidden mt-3" id="error">
                     Please fill out this field.
@@ -162,7 +159,7 @@
                     >Cloth Mask</label
                   >
                   <input
-                    value="0"
+                    v-model="cloth_percentage"
                     class="
                       appearance-none
                       block
@@ -177,8 +174,6 @@
                     type="number"
                     min="0"
                     max="100"
-                    name="integration[street_address]"
-                    id="cloth-percentage"
                   />
                   <p class="text-sm text-red-500 hidden mt-3" id="error">
                     Please fill out this field.
@@ -207,18 +202,20 @@
                 <div>
                   <input
                     type="checkbox"
-                    id="checkbox-school-closing"
+                    v-model="school_closing"
                     class="h-4 w-4 border rounded mr-2"
+                    id = "school_closing"
                   />
-                  <label for="checkbox-school-closing">School closing</label>
+                  <label for="school_closing">School closing</label>
                 </div>
                 <div>
                   <input
                     type="checkbox"
-                    id="checkbox-workplace-closing"
+                    v-model="workplace_closing"
                     class="h-4 w-4 border rounded mr-2"
+                    id = "workplace_closing"
                   />
-                  <label for="checkbox-workplace-closing"
+                  <label for="workplace_closing"
                     >Workplace closing</label
                   >
                 </div>
@@ -226,20 +223,22 @@
                 <div>
                   <input
                     type="checkbox"
-                    id="checkbox-gatherings"
+                    v-model="gatherings"
                     class="h-4 w-4 border rounded mr-2"
+                    id="gatherings"
                   />
-                  <label for="checkbox-gatherings"
+                  <label for="gatherings"
                     >Restrictions on gatherings</label
                   >
                 </div>
                 <div>
                   <input
                     type="checkbox"
-                    id="checkbox-stay"
+                    v-model="stay_at_home"
                     class="h-4 w-4 border rounded mr-2"
+                    id="stay_at_home"
                   />
-                  <label for="checkbox-stay">Stay at home requirements</label>
+                  <label for="stay_at_home">Stay at home requirements</label>
                 </div>
               </div>
             </div>
@@ -338,6 +337,14 @@ export default {
       unit_type_chance: [],
       residential_streets: [],
       commercial_streets: [],
+      surgical_percentage: 0,
+      kn_percentage: 0,
+      cloth_percentage: 0,
+      school_closing: 0,
+      workplace_closing: 0,
+      gatherings: 0,
+      stay_at_home: 0,
+      err_msg: "",
     };
   },
   mounted() {
@@ -856,6 +863,14 @@ export default {
         if (random <= factor) return this.unit_type[i];
       }
       return null;
+    },
+
+    checkPercentage: function(){
+      if(this.surgical_percentage + this.kn_percentage + this.cloth_percentage > 100){
+          this.err_msg = "* sum of three percentage must blow 100";
+      }else{
+        this.err_msg = "";
+      }
     },
   },
 };
