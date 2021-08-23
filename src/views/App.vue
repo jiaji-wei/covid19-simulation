@@ -309,13 +309,15 @@ import "./../static/agentmaps.js";
 
 import Header from "../components/Header.vue";
 
-import streets_data from "./../static/street_features.json";
-import units_data from "./../static/unit_features.json";
-import map_data from "./../static/map_data.json";
+// import streets_data from "./../static/street_features.json";
+// import units_data from "./../static/unit_features.json";
+// import map_data from "./../static/map_data.json";
 
-// import streets_data from "./../static/street_features.js";
-// import units_data from "./../static/unit_features.js";
-// import map_data from "./../static/map_data.js";
+
+import streets_data from "./../static/map/london/streets_data.json";
+import units_data from "./../static/map/london/units_data.json";
+import map_data from "./../static/map/london/center_london.json";
+import * as sereet from "./../static/map/london/street.js";
 
 export default {
   name: "App",
@@ -336,6 +338,8 @@ export default {
       ],
       unit_type: [],
       unit_type_chance: [],
+      residential_streets: [], 
+      commercial_streets: [],
     };
   },
   mounted() {
@@ -345,6 +349,11 @@ export default {
   methods: {
     initMap() {
       //Set bounds for the area on the map where the simulation will run (gotten from openstreetmap.org).
+
+      this.bounding_box = [
+        [51.51533, -0.08417],
+        [51.51057, -0.09303],
+      ];
 
       //Create and setup the Leafvar map object.
       var map = L.map("mapid").fitBounds(this.bounding_box).setZoom(16);
@@ -358,10 +367,13 @@ export default {
 
       this.agentmap = L.A.agentmap(map);
       this.animation_interval_input = 5;
-      this.speed_controller_input = 1;
-      this.infection_probability_input = 0.00001;
+      this.speed_controller_input = 5;
+      this.infection_probability_input = 0.01;
       this.unit_type = ["School", "Public Area", "Workplace", "Home"];
       this.unit_type_chance = [0.1, 0.2, 0.3, 0.4];
+      this.residential_streets = sereet.residential_streets;
+      this.commercial_streets = sereet.commercial_streets;
+      // agentmap.buildingify(london_data, bounding_points);
     },
 
     setupSim() {
@@ -380,17 +392,13 @@ export default {
       );
 
       //Split the map's units into residential and commercial zones.
-      var residential_streets = [
-          "Wythe Lane",
-          "Heyward Lane",
-          "Lynch Lane",
-          "Clymer Lane",
-        ],
-        commercial_streets = ["Heyward Place", "Heyward Drive", "Hooper Place"];
+  
+      
+      
       this.agentmap.zoned_units = this.getZonedUnits(
         this.agentmap,
-        residential_streets,
-        commercial_streets
+        this.residential_streets,
+        this.commercial_streets
       );
 
       this.setUnitsProperties(this.agentmap);
@@ -406,7 +414,7 @@ export default {
         ));
 
       //Generate 200 agents according to the rules of epidemicAgentMaker, displaying them as blue, .5 meter radius circles.
-      this.agentmap.agentify(1, this.epidemicAgentMaker.bind(this));
+      this.agentmap.agentify(100, this.epidemicAgentMaker.bind(this));
 
       //Attach a popup to show when any agent is clicked.
       this.agentmap.agents.bindPopup(this.agentPopupMaker);
@@ -483,12 +491,16 @@ export default {
         commercial: [],
       };
 
+      const streetSet = new Set();
+
       //Find and store the units on the perimeter of the lower part of the neighborhood,
       //and along the streets in the upper part of the neighborhood.
       agentmap.units.eachLayer(function (unit) {
         var street_id = unit.street_id,
           street = agentmap.streets.getLayer(street_id),
           street_name = street.feature.properties.name;
+
+        streetSet.add(street_name);
 
         if (residential_streets.includes(street_name)) {
           zoned_units.residential.push(unit._leaflet_id);
@@ -545,8 +557,7 @@ export default {
     },
 
     //Return a GeoJSON feature representing an agent.
-    epidemicAgentMaker(id) {
-      console.log(id);
+    epidemicAgentMaker() {
       //Decide whether the agent will be homebound.
       var homebound = Math.random() < 0.25 ? true : false;
 
@@ -772,7 +783,6 @@ export default {
         Math.random(),
         Math.random()
       );
-      console.log("work:", random_workplace_point);
       agent.scheduleTrip(
         random_workplace_point,
         { type: "unit", id: agent.workplace_id },
@@ -793,7 +803,6 @@ export default {
         Math.random(),
         Math.random()
       );
-      console.log("home:", random_home_point);
       agent.scheduleTrip(
         random_home_point,
         { type: "unit", id: agent.home_id },
