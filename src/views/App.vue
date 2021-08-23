@@ -334,6 +334,8 @@ export default {
         [39.9058, -86.091],
         [39.8992, -86.1017],
       ],
+      unit_type: [],
+      unit_type_chance: [],
     };
   },
   mounted() {
@@ -358,6 +360,8 @@ export default {
       this.animation_interval_input = 5;
       this.speed_controller_input = 1;
       this.infection_probability_input = 0.00001;
+      this.unit_type = ["School", "Public Area", "Workplace", "Home"];
+      this.unit_type_chance = [0.1, 0.2, 0.3, 0.4];
     },
 
     setupSim() {
@@ -389,6 +393,8 @@ export default {
         commercial_streets
       );
 
+      this.setUnitsProperties(this.agentmap);
+
       //Use only a subset of the zoned units.
       (this.agentmap.zoned_units.residential = this.pick_random_n(
         this.agentmap.zoned_units.residential,
@@ -404,6 +410,9 @@ export default {
 
       //Attach a popup to show when any agent is clicked.
       this.agentmap.agents.bindPopup(this.agentPopupMaker);
+
+      //Attach a popup to show when any unit is clicked.
+      this.agentmap.units.bindPopup(this.unitPopupMaker);
 
       //Keep a count of how many infected agents there are.
       this.agentmap.infected_count = 0;
@@ -456,6 +465,16 @@ export default {
       return string;
     },
 
+    unitPopupMaker(unit) {
+      var string = "Unit id:" + unit._leaflet_id + "</br>";
+
+      string += "BuildingType: " + unit.unit_type + "</br>";
+
+      string += "Status: " + "closing";
+
+      return string;
+    },
+
     //Given two arrays of streets and their agentmap, split their units into residential and commercial zones,
     //and return their division.
     getZonedUnits(agentmap, residential_streets, commercial_streets) {
@@ -484,6 +503,13 @@ export default {
       });
 
       return zoned_units;
+    },
+
+    setUnitsProperties(agentmap) {
+      const self = this;
+      agentmap.units.eachLayer(function (unit) {
+        unit.unit_type = self.randomUnitType();
+      });
     },
 
     //The controller  for the Agentmap.
@@ -606,9 +632,8 @@ export default {
 
     //Given an agent, define its controller in a way conducive to the epidemic simulation.
     setAgentController(agent) {
-      
       //Do the following on each tick of the simulation for the agent.
-      agent.controller =  () => {
+      agent.controller = () => {
         //Do this when the commute_alarm tick is reached.
         if (!agent.homebound && agent.agentmap.state.ticks !== 0) {
           if (agent.agentmap.state.ticks % agent.commute_alarm === 0) {
@@ -817,6 +842,16 @@ export default {
       });
 
       return random_n;
+    },
+
+    randomUnitType() {
+      var factor = 0,
+        random = Math.random();
+      for (var i = this.unit_type.length - 1; i >= 0; i--) {
+        factor += this.unit_type_chance[i];
+        if (random <= factor) return this.unit_type[i];
+      }
+      return null;
     },
   },
 };
