@@ -23,24 +23,19 @@
             mb-6
           "
         >
-          Coid-19 
+          Coid-19 Simulation
         </h2>
         <p class="text-bookmark-grey text-lg text-center lg:text-left mb-6">
-          A Agent-based model A clean and simple interface to organize your favourite websites. Open
-          a new browser tab and serr your sites load instantly. Try if for free.
+          An Agent-based model to simulation Covid19 propagation by adding masks to the agents, 
+          imposing public policy influences and a variety of characteristics.
         </p>
         <div class="flex justify-center flex-wrap gap-6">
-          <button
-            type="button"
-            class="btn btn-purple hover:bg-bookmark-white hover:text-black"
-          >
-            Get it on Chrome
-          </button>
+          
           <button
             type="button"
             class="btn btn-white hover:bg-bookmark-purple hover:text-white"
           >
-            Get it on FireFox
+            Go for Simulation!
           </button>
         </div>
       </div>
