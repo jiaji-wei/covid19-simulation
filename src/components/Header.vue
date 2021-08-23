@@ -15,14 +15,13 @@
       "
     >
       <li class="cursor-pointer">Features</li>
-      <li class="cursor-pointer">Citys</li>
+      <li class="cursor-pointer"><router-link to="/app">London</router-link></li>
+      <li class="cursor-pointer"><router-link to="/app">New Yourk</router-link></li>
+      <li class="cursor-pointer"><router-link to="/app">Phoenix</router-link></li>
+      <li class="cursor-pointer"><router-link to="/app">Sydney</router-link></li>
+      <li class="cursor-pointer"><router-link to="/app">Melbourne</router-link></li>
       <li class="cursor-pointer">Contact</li>
-      <button
-        type="button"
-        class="bg-red-400 text-white rounded-md px-7 py-3 uppercase"
-      >
-        <router-link to="/app">Login</router-link>
-      </button>
+     
     </ul>
     <div class="flex sm:hidden flex-1 justify-end">
       <i class="text-2xs fas fa-bars"></i>
