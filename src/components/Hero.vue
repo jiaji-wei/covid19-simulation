@@ -42,28 +42,13 @@
       <!-- Image -->
       <div class="flex justify-center flex-1 md-10 md:mb-16 lg:mb-0 z-10">
         <img
-          class="w-5/6 h-5/6 sm:w-3/4 md:w-full md:h-full"
-          src="./../imgs/hero-bg.png"
+          class="w-5/6 h-5/6 sm:w-3/4 md:w-full md:h-full rounded-3xl"
+          src="./../imgs/hero.png"
           alt=""
         />
       </div>
     </div>
-    <!-- Rounded Rectangle -->
-    <div
-      class="
-        hidden
-        md:block
-        overflow-hidden
-        bg-bookmark-purple
-        rounded-l-full
-        absolute
-        h-80
-        w-2/4
-        top-32
-        right-0
-        lg:-bottom-28 lg:-right-26
-      "
-    ></div>
+    
   </section>
 </template>
 

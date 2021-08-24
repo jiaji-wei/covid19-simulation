@@ -22,8 +22,8 @@
       >
         <div class="flex flex-1 justify-center z-10 mb-10 lg:mb-0">
           <img
-            class="w-5/6 h-5/6 sm:w-3/4 sm:h-3/4 md:w-full md:h-full"
-            src="./../imgs/illustration-features-tab-1.png"
+            class="w-5/6 h-5/6 sm:w-3/4 sm:h-3/4 md:w-full md:h-full rounded-3xl"
+            src="./../imgs/tab1.png"
             alt=""
           />
         </div>
@@ -45,20 +45,7 @@
          
         </div>
       </div>
-      <div
-        class="
-          hidden
-          lg:block
-          overflow-hidden
-          bg-bookmark-purple
-          rounded-r-full
-          absolute
-          h-80
-          w-2/4
-          -bottom-24
-          -left-36
-        "
-      ></div>
+      
     </div>
     <!-- Feature #2 -->
     <div class="relative mt-20 lg:mt-52">
@@ -75,8 +62,8 @@
         <!-- Image -->
         <div class="flex flex-1 justify-center z-10 mb-10 lg:mb-0">
           <img
-            class="w-5/6 h-5/6 sm:w-3/4 sm:h-3/4 md:w-full md:h-full"
-            src="./../imgs/illustration-features-tab-2.png"
+            class="w-5/6 h-5/6 sm:w-3/4 sm:h-3/4 md:w-full md:h-full rounded-3xl"
+            src="./../imgs/tab2.png"
             alt=""
           />
         </div>
@@ -98,22 +85,7 @@
           
         </div>
       </div>
-      <!-- Rounded Rectangle -->
-      <div
-      class="
-        hidden
-        md:block
-        overflow-hidden
-        bg-bookmark-purple
-        rounded-l-full
-        absolute
-        h-80
-        w-2/4
-        top-32
-        right-0
-        lg:-bottom-28 lg:-right-26
-      "
-    ></div>
+      
     </div>
     <!-- Feature #3 -->
     <div class="relative mt-20 lg:mt-52">
@@ -130,8 +102,8 @@
         <!-- Image -->
         <div class="flex flex-1 justify-center z-10 mb-10 lg:mb-0">
           <img
-            class="w-5/6 h-5/6 sm:w-3/4 sm:h-3/4 md:w-full md:h-full"
-            src="./../imgs/illustration-features-tab-3.png"
+            class="w-5/6 h-5/6 sm:w-3/4 sm:h-3/4 md:w-full md:h-full rounded-3xl"
+            src="./../imgs/tab3.png"
             alt=""
           />
         </div>
@@ -154,20 +126,7 @@
         </div>
       </div>
       <!-- Rounded Rectangle -->
-      <div
-        class="
-          hidden
-          lg:block
-          overflow-hidden
-          bg-bookmark-purple
-          rounded-r-full
-          absolute
-          h-80
-          w-2/4
-          -bottom-24
-          -left-36
-        "
-      ></div>
+      
     </div>
   </section>
 </template>
