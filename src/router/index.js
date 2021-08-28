@@ -18,6 +18,12 @@ const routes = [
     meta: {
       title: "Covid19 Simulation Appliaction",
     },
+    children: [
+      {
+        path: ":location",
+        component: App,
+      },
+    ],
   },
 ];
 
