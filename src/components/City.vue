@@ -28,17 +28,18 @@
         </div>
         <hr class="border-b border-bookmark-white" />
         <div class="flex p-6">
-          <button
-            type="button"
-            class="
-              flex-1
-              btn btn-purple
-              hover:bg-bookmark-white
-              hover:text-black
-            "
-          >
-            Lunch App
-          </button>
+          <router-link to="/app/london">
+            <button
+              type="button"
+              class="
+                flex-1
+                btn btn-purple
+                hover:bg-bookmark-white hover:text-black
+              "
+            >
+              Lunch App
+            </button>
+          </router-link>
         </div>
       </div>
       <!-- Card 2 -->
@@ -53,8 +54,7 @@
             class="
               flex-1
               btn btn-purple
-              hover:bg-bookmark-white
-              hover:text-black
+              hover:bg-bookmark-white hover:text-black
             "
           >
             Lunch App
@@ -73,8 +73,7 @@
             class="
               flex-1
               btn btn-purple
-              hover:bg-bookmark-white
-              hover:text-black
+              hover:bg-bookmark-white hover:text-black
             "
           >
             Lunch App
@@ -93,8 +92,7 @@
             class="
               flex-1
               btn btn-purple
-              hover:bg-bookmark-white
-              hover:text-black
+              hover:bg-bookmark-white hover:text-black
             "
           >
             Lunch App
@@ -113,8 +111,7 @@
             class="
               flex-1
               btn btn-purple
-              hover:bg-bookmark-white
-              hover:text-black
+              hover:bg-bookmark-white hover:text-black
             "
           >
             Lunch App
