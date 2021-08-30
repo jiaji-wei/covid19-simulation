@@ -23,7 +23,8 @@
         <h1 class="text-sm font-medium text-gray-700 py-2">Statistics</h1>
         <div
           class="
-            md:flex md:flex-row md:space-x-4
+            md:flex md:flex-row
+            md:space-x-4
             w-full
             text-xs
             p-3
@@ -86,7 +87,8 @@
         <h2 class="text-red-500 mt-1 mb-2">{{ err_msg }}</h2>
         <div
           class="
-            md:flex md:flex-row md:space-x-4
+            md:flex md:flex-row
+            md:space-x-4
             w-full
             text-xs
             p-3
@@ -242,7 +244,8 @@
             tracking-wider
             text-white
             rounded-full
-            hover:shadow-lg hover:bg-green-500
+            hover:shadow-lg
+            hover:bg-green-500
           "
         >
           Run
@@ -262,7 +265,8 @@
             border
             text-gray-600
             rounded-full
-            hover:shadow-lg hover:bg-gray-100
+            hover:shadow-lg
+            hover:bg-gray-100
           "
         >
           Reset
@@ -297,6 +301,7 @@ export default {
       ],
       unit_type: [],
       unit_type_chance: [],
+      unit_type_color: [],
       residential_streets: [],
       commercial_streets: [],
 
@@ -346,6 +351,9 @@ export default {
       this.speed_controller_input = 5;
       this.unit_type = ["School", "Public Area", "Workplace", "Home"];
       this.unit_type_chance = [0.1, 0.2, 0.3, 0.4];
+
+      this.unit_type_color = ["purple", "green", "chocolate", "black"];
+
       this.residential_streets = sereet.residential_streets;
       this.commercial_streets = sereet.commercial_streets;
       // agentmap.buildingify(london_data, bounding_points);
@@ -504,7 +512,9 @@ export default {
     setUnitsProperties(agentmap) {
       const self = this;
       agentmap.units.eachLayer(function (unit) {
-        unit.unit_type = self.randomUnitType();
+        let u = self.randomUnitType();
+        unit.unit_type = u["type"];
+        unit.setStyle({ color: u["color"] });
       });
     },
 
@@ -873,9 +883,9 @@ export default {
         random = Math.random();
       for (var i = this.unit_type.length - 1; i >= 0; i--) {
         factor += this.unit_type_chance[i];
-        if (random <= factor) return this.unit_type[i];
+        if (random <= factor) return {"type":this.unit_type[i],"color": this.unit_type_color[i]};
       }
-      return null;
+      return {};
     },
 
     checkPercentage: function () {
