@@ -304,6 +304,7 @@ export default {
       unit_type_color: [],
       residential_streets: [],
       commercial_streets: [],
+      gathering_streets: [],
 
       surgical_percentage: 0,
       kn_percentage: 0,
@@ -319,16 +320,16 @@ export default {
   },
   async mounted() {
     const { location } = this;
-    const sereet = require(`./../static/map/${location}/street.js`);
+    const street = require(`./../static/map/${location}/street.js`);
     const streets_data = require(`./../static/map/${location}/streets_data.json`);
     const units_data = require(`./../static/map/${location}/units_data.json`);
     const map_data = require(`./../static/map/${location}/map_data.json`);
 
-    await this.initMap(sereet);
+    await this.initMap(street);
     await this.setupSim({ streets_data, units_data, map_data });
   },
   methods: {
-    initMap(sereet) {
+    initMap(street) {
       //Set bounds for the area on the map where the simulation will run (gotten from openstreetmap.org).
 
       this.bounding_box = [
@@ -354,8 +355,9 @@ export default {
 
       this.unit_type_color = ["blue", "green", "#06B6D4", "black"];
 
-      this.residential_streets = sereet.residential_streets;
-      this.commercial_streets = sereet.commercial_streets;
+      this.residential_streets = street.residential_streets;
+      this.commercial_streets = street.commercial_streets;
+      this.gathering_streets = street.gathering_streets;
       // agentmap.buildingify(london_data, bounding_points);
     },
 
@@ -379,7 +381,8 @@ export default {
       this.agentmap.zoned_units = this.getZonedUnits(
         this.agentmap,
         this.residential_streets,
-        this.commercial_streets
+        this.commercial_streets,
+
       );
 
       this.setUnitsProperties(this.agentmap);
@@ -479,7 +482,7 @@ export default {
 
     //Given two arrays of streets and their agentmap, split their units into residential and commercial zones,
     //and return their division.
-    getZonedUnits(agentmap, residential_streets, commercial_streets) {
+    getZonedUnits(agentmap, residential_streets, commercial_streets, gathering_streets) {
       var zoned_units = {
         residential: [],
         commercial: [],
@@ -499,12 +502,11 @@ export default {
 
         if (residential_streets.includes(street_name)) {
           zoned_units.residential.push(unit._leaflet_id);
-        }
-
-        if (commercial_streets.includes(street_name)) {
+        }else if (commercial_streets.includes(street_name)) {
           zoned_units.commercial.push(unit._leaflet_id);
+        }else if (gathering_streets.includes(street_name)) {
+          zoned_units.gathering.push(unit._leaflet_id);
         }
-
         //For each zoned unit, add an array to store which agents are in it for easy searching.
         unit.resident_ids = [];
       });
@@ -706,11 +708,10 @@ export default {
 
     //Check whether the agent should recover or become infected.
     checkInfection(agent) {
-      var unit = agent.agentmap.units.getLayer(agent.place.id);
-
       //Check whether the agent is in a unit. If so, if any other agents in the unit are infected,
       //infect it with a certain probability.
       if (agent.place.type === "unit" && agent.infected === false) {
+        var unit = agent.agentmap.units.getLayer(agent.place.id);
         var resident_ids = unit.resident_ids;
         for (var i = 0; i < resident_ids.length; i++) {
           var resident = agent.agentmap.agents.getLayer(resident_ids[i]);
@@ -732,10 +733,14 @@ export default {
         agent.infected &&
         agent.agentmap.state.ticks === agent.recovery_tick
       ) {
-        unit.sterilized = false;
-        unit.infected_ticket = agent.agentmap.state.ticks;
-        unit.setStyle({ color: "red" });
 
+        if (agent.place.type === "unit" ) {
+          unit = agent.agentmap.units.getLayer(agent.place.id);
+          unit.sterilized = false;
+          unit.infected_ticket = agent.agentmap.state.ticks;
+          unit.setStyle({ color: "red" });
+        }
+        
         this.uninfectAgent(agent);
       }
     },
