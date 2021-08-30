@@ -382,7 +382,7 @@ export default {
         this.agentmap,
         this.residential_streets,
         this.commercial_streets,
-
+        this.gathering_streets
       );
 
       this.setUnitsProperties(this.agentmap);
@@ -390,10 +390,14 @@ export default {
       //Use only a subset of the zoned units.
       (this.agentmap.zoned_units.residential = this.pick_random_n(
         this.agentmap.zoned_units.residential,
-        100
+        50
       )),
         (this.agentmap.zoned_units.commercial = this.pick_random_n(
           this.agentmap.zoned_units.commercial,
+          30
+        )),
+        (this.agentmap.zoned_units.gathering = this.pick_random_n(
+          this.agentmap.zoned_units.gathering,
           20
         ));
 
@@ -482,7 +486,12 @@ export default {
 
     //Given two arrays of streets and their agentmap, split their units into residential and commercial zones,
     //and return their division.
-    getZonedUnits(agentmap, residential_streets, commercial_streets, gathering_streets) {
+    getZonedUnits(
+      agentmap,
+      residential_streets,
+      commercial_streets,
+      gathering_streets
+    ) {
       var zoned_units = {
         residential: [],
         commercial: [],
@@ -502,9 +511,9 @@ export default {
 
         if (residential_streets.includes(street_name)) {
           zoned_units.residential.push(unit._leaflet_id);
-        }else if (commercial_streets.includes(street_name)) {
+        } else if (commercial_streets.includes(street_name)) {
           zoned_units.commercial.push(unit._leaflet_id);
-        }else if (gathering_streets.includes(street_name)) {
+        } else if (gathering_streets.includes(street_name)) {
           zoned_units.gathering.push(unit._leaflet_id);
         }
         //For each zoned unit, add an array to store which agents are in it for easy searching.
@@ -733,14 +742,13 @@ export default {
         agent.infected &&
         agent.agentmap.state.ticks === agent.recovery_tick
       ) {
-
-        if (agent.place.type === "unit" ) {
+        if (agent.place.type === "unit") {
           unit = agent.agentmap.units.getLayer(agent.place.id);
           unit.sterilized = false;
           unit.infected_ticket = agent.agentmap.state.ticks;
           unit.setStyle({ color: "red" });
         }
-        
+
         this.uninfectAgent(agent);
       }
     },
