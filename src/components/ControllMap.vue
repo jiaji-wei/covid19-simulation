@@ -352,7 +352,7 @@ export default {
       this.unit_type = ["School", "Public Area", "Workplace", "Home"];
       this.unit_type_chance = [0.1, 0.2, 0.3, 0.4];
 
-      this.unit_type_color = ["purple", "green", "chocolate", "black"];
+      this.unit_type_color = ["blue", "green", "#06B6D4", "black"];
 
       this.residential_streets = sereet.residential_streets;
       this.commercial_streets = sereet.commercial_streets;
@@ -459,6 +459,8 @@ export default {
 
       string += "BuildingType: " + unit.unit_type + "</br>";
 
+      string += "IsSterilized: " + unit.sterilized + "</br>";
+
       if (unit.unit_type === "Home") {
         string +=
           this.stay_at_home === "true" ? "Status: close" : "Status: open";
@@ -514,6 +516,7 @@ export default {
       agentmap.units.eachLayer(function (unit) {
         let u = self.randomUnitType();
         unit.unit_type = u["type"];
+        unit.sterilized = true;
         unit.setStyle({ color: u["color"] });
       });
     },
@@ -705,13 +708,15 @@ export default {
       //Check whether the agent is in a unit. If so, if any other agents in the unit are infected,
       //infect it with a certain probability.
       if (agent.place.type === "unit" && agent.infected === false) {
-        var resident_ids = agent.agentmap.units.getLayer(
-          agent.place.id
-        ).resident_ids;
+        var unit = agent.agentmap.units.getLayer(agent.place.id);
+        var resident_ids = unit.resident_ids;
 
         for (var i = 0; i < resident_ids.length; i++) {
           var resident = agent.agentmap.agents.getLayer(resident_ids[i]);
           if (resident.infected) {
+            unit.sterilized = false;
+            unit.infected_ticket = agent.agentmap.state.ticks;
+            unit.setStyle({"color":"red"});
             if (Math.random() < agent.agentmap.infection_probability) {
               this.infectAgent(agent);
               break;
@@ -883,7 +888,8 @@ export default {
         random = Math.random();
       for (var i = this.unit_type.length - 1; i >= 0; i--) {
         factor += this.unit_type_chance[i];
-        if (random <= factor) return {"type":this.unit_type[i],"color": this.unit_type_color[i]};
+        if (random <= factor)
+          return { type: this.unit_type[i], color: this.unit_type_color[i] };
       }
       return {};
     },
