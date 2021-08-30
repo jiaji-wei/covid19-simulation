@@ -705,18 +705,16 @@ export default {
 
     //Check whether the agent should recover or become infected.
     checkInfection(agent) {
+      var unit = agent.agentmap.units.getLayer(agent.place.id);
+
       //Check whether the agent is in a unit. If so, if any other agents in the unit are infected,
       //infect it with a certain probability.
       if (agent.place.type === "unit" && agent.infected === false) {
-        var unit = agent.agentmap.units.getLayer(agent.place.id);
         var resident_ids = unit.resident_ids;
-
         for (var i = 0; i < resident_ids.length; i++) {
           var resident = agent.agentmap.agents.getLayer(resident_ids[i]);
           if (resident.infected) {
-            unit.sterilized = false;
-            unit.infected_ticket = agent.agentmap.state.ticks;
-            unit.setStyle({"color":"red"});
+            this.infectUnit(unit, agent.agentmap.state.ticks);
             if (Math.random() < agent.agentmap.infection_probability) {
               this.infectAgent(agent);
               break;
@@ -731,8 +729,15 @@ export default {
         agent.infected &&
         agent.agentmap.state.ticks === agent.recovery_tick
       ) {
+        this.infectUnit(unit, agent.agentmap.state.ticks);
         this.uninfectAgent(agent);
       }
+    },
+
+    infectUnit(unit, tick) {
+      unit.sterilized = false;
+      unit.infected_ticket = tick;
+      unit.setStyle({ color: "red" });
     },
 
     infectAgent(agent) {
