@@ -483,6 +483,7 @@ export default {
       var zoned_units = {
         residential: [],
         commercial: [],
+        gathering: [],
       };
 
       const streetSet = new Set();
@@ -714,7 +715,9 @@ export default {
         for (var i = 0; i < resident_ids.length; i++) {
           var resident = agent.agentmap.agents.getLayer(resident_ids[i]);
           if (resident.infected) {
-            this.infectUnit(unit, agent.agentmap.state.ticks);
+            unit.sterilized = false;
+            unit.infected_ticket = agent.agentmap.state.ticks;
+            unit.setStyle({ color: "red" });
             if (Math.random() < agent.agentmap.infection_probability) {
               this.infectAgent(agent);
               break;
@@ -729,15 +732,12 @@ export default {
         agent.infected &&
         agent.agentmap.state.ticks === agent.recovery_tick
       ) {
-        this.infectUnit(unit, agent.agentmap.state.ticks);
+        unit.sterilized = false;
+        unit.infected_ticket = agent.agentmap.state.ticks;
+        unit.setStyle({ color: "red" });
+
         this.uninfectAgent(agent);
       }
-    },
-
-    infectUnit(unit, tick) {
-      unit.sterilized = false;
-      unit.infected_ticket = tick;
-      unit.setStyle({ color: "red" });
     },
 
     infectAgent(agent) {
