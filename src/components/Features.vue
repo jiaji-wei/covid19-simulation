@@ -1,5 +1,5 @@
 <template>
-  <section class="bg-bookmark-white py-20 mt-20 lg:mt-60">
+  <section class="bg-bookmark-white py-20 mt-20 lg:mt-60" id="features">
     <!-- Heading -->
     <div class="sm:w-3/4 lg:w-5/12 mx-auto px-2">
       <h1 class="text-3xl text-center text-bookmark-blue">Features</h1>
