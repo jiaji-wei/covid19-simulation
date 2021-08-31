@@ -34,7 +34,8 @@
               class="
                 flex-1
                 btn btn-purple
-                hover:bg-bookmark-white hover:text-black
+                hover:bg-bookmark-white
+                hover:text-black
               "
             >
               Lunch App
@@ -45,20 +46,23 @@
       <!-- Card 2 -->
       <div class="flex flex-col rounded-md shadow-md">
         <div class="p-6 flex flex-col items-center">
-          <h3 class="mt-5 mb-2 text-bookmark-blue text-lg">New Yourk</h3>
+          <h3 class="mt-5 mb-2 text-bookmark-blue text-lg">New York</h3>
         </div>
         <hr class="border-b border-bookmark-white" />
         <div class="flex p-6">
-          <button
-            type="button"
-            class="
-              flex-1
-              btn btn-purple
-              hover:bg-bookmark-white hover:text-black
-            "
-          >
-            Lunch App
-          </button>
+          <router-link to="/app/newyork">
+            <button
+              type="button"
+              class="
+                flex-1
+                btn btn-purple
+                hover:bg-bookmark-white
+                hover:text-black
+              "
+            >
+              Lunch App
+            </button>
+          </router-link>
         </div>
       </div>
       <!-- Card 3 -->
@@ -68,16 +72,19 @@
         </div>
         <hr class="border-b border-bookmark-white" />
         <div class="flex p-6">
-          <button
-            type="button"
-            class="
-              flex-1
-              btn btn-purple
-              hover:bg-bookmark-white hover:text-black
-            "
-          >
-            Lunch App
-          </button>
+          <router-link to="/app/phoenix">
+            <button
+              type="button"
+              class="
+                flex-1
+                btn btn-purple
+                hover:bg-bookmark-white
+                hover:text-black
+              "
+            >
+              Lunch App
+            </button>
+          </router-link>
         </div>
       </div>
       <!-- Card 4 -->
@@ -87,16 +94,19 @@
         </div>
         <hr class="border-b border-bookmark-white" />
         <div class="flex p-6">
-          <button
-            type="button"
-            class="
-              flex-1
-              btn btn-purple
-              hover:bg-bookmark-white hover:text-black
-            "
-          >
-            Lunch App
-          </button>
+          <router-link to="/app/sydney">
+            <button
+              type="button"
+              class="
+                flex-1
+                btn btn-purple
+                hover:bg-bookmark-white
+                hover:text-black
+              "
+            >
+              Lunch App
+            </button>
+          </router-link>
         </div>
       </div>
       <!-- Card 3 -->
@@ -106,16 +116,19 @@
         </div>
         <hr class="border-b border-bookmark-white" />
         <div class="flex p-6">
-          <button
-            type="button"
-            class="
-              flex-1
-              btn btn-purple
-              hover:bg-bookmark-white hover:text-black
-            "
-          >
-            Lunch App
-          </button>
+          <router-link to="/app/melbourne">
+            <button
+              type="button"
+              class="
+                flex-1
+                btn btn-purple
+                hover:bg-bookmark-white
+                hover:text-black
+              "
+            >
+              Lunch App
+            </button>
+          </router-link>
         </div>
       </div>
     </div>
