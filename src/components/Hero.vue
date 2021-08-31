@@ -35,7 +35,7 @@
             type="button"
             class="btn btn-white hover:bg-bookmark-purple hover:text-white"
           >
-            Go for Simulation!
+            <a href="#cities">Go for Simulation!</a>
           </button>
         </div>
       </div>
