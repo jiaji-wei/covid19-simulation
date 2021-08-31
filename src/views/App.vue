@@ -13,7 +13,13 @@
 import Header from "../components/Header.vue";
 import ControllMap from "../components/ControllMap.vue";
 
-const SUPPORTED_LOCATIONS = ["london", "melbourne", "ny", "phoenix", "sydney"];
+const SUPPORTED_LOCATIONS = [
+  "london",
+  "melbourne",
+  "newyork",
+  "phoenix",
+  "sydney",
+];
 
 export default {
   name: "App",
@@ -21,8 +27,9 @@ export default {
   data: () => ({
     location: "london",
   }),
-  mounted() {
+  created() {
     const routeLocation = this.$route.params.location.trim().toLowerCase();
+    console.log("location:", this.location);
     this.location = SUPPORTED_LOCATIONS.includes(routeLocation)
       ? routeLocation
       : "london";

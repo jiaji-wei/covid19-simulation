@@ -295,10 +295,7 @@ export default {
       infected_display: "",
       healthy_display: "",
       animation_interval_map: { 1: 0, 2: 1000, 3: 100, 4: 10, 5: 1 },
-      bounding_box: [
-        [39.9058, -86.091],
-        [39.8992, -86.1017],
-      ],
+      bounding_box: [],
       unit_type: [],
       unit_type_chance: [],
       unit_type_color: [],
@@ -319,26 +316,41 @@ export default {
     };
   },
   async mounted() {
-    const { location } = this;
+    const location = this.$route.params.location;
     const street = require(`./../static/map/${location}/street.js`);
     const streets_data = require(`./../static/map/${location}/streets_data.json`);
     const units_data = require(`./../static/map/${location}/units_data.json`);
     const map_data = require(`./../static/map/${location}/map_data.json`);
-
-    await this.initMap(street);
+    const locDict = {
+      london: [
+        [51.51533, -0.08417],
+        [51.51057, -0.09303],
+      ],
+      melbourne: [
+        [-37.80622, 144.95781],
+        [-37.8122, 144.96759],
+      ],
+      newyork: [
+        [40.78084, -73.96389],
+        [40.77625, -73.95498],
+      ],
+      phoenix: [
+        [33.44135, -112.08095],
+        [33.43715, -112.07495],
+      ],
+      sydney: [
+        [-33.87599, 151.20289],
+        [-33.88086, 151.20969],
+      ],
+    };
+    await this.initMap(street, locDict[location]);
     await this.setupSim({ streets_data, units_data, map_data });
   },
   methods: {
-    initMap(street) {
+    initMap(street, bounding_box) {
       //Set bounds for the area on the map where the simulation will run (gotten from openstreetmap.org).
-
-      this.bounding_box = [
-        [51.51533, -0.08417],
-        [51.51057, -0.09303],
-      ];
-
       //Create and setup the Leafvar map object.
-      var map = L.map("mapid").fitBounds(this.bounding_box).setZoom(16);
+      var map = L.map("mapid").fitBounds(bounding_box).setZoom(16);
 
       //Get map graphics by adding OpenStreetMap tiles to the map object.
       L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -390,15 +402,15 @@ export default {
       //Use only a subset of the zoned units.
       (this.agentmap.zoned_units.residential = this.pick_random_n(
         this.agentmap.zoned_units.residential,
-        50
+        this.agentmap.zoned_units.residential.length > 50 ? 50 : 30
       )),
         (this.agentmap.zoned_units.commercial = this.pick_random_n(
           this.agentmap.zoned_units.commercial,
-          30
+          this.agentmap.zoned_units.commercial.length > 50 ? 30 : 20
         )),
         (this.agentmap.zoned_units.gathering = this.pick_random_n(
           this.agentmap.zoned_units.gathering,
-          20
+          this.agentmap.zoned_units.gathering.length > 50 ? 10 : 5
         ));
 
       //Generate 200 agents according to the rules of epidemicAgentMaker, displaying them as blue, .5 meter radius circles.
@@ -519,7 +531,6 @@ export default {
         //For each zoned unit, add an array to store which agents are in it for easy searching.
         unit.resident_ids = [];
       });
-
       return zoned_units;
     },
 
