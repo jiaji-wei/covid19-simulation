@@ -23,7 +23,8 @@
         <h1 class="text-sm font-medium text-gray-700 py-2">Statistics</h1>
         <div
           class="
-            md:flex md:flex-row md:space-x-4
+            md:flex md:flex-row
+            md:space-x-4
             w-full
             text-xs
             p-3
@@ -116,7 +117,8 @@
         <h2 class="text-red-500 mt-1 mb-2">{{ err_msg }}</h2>
         <div
           class="
-            md:flex md:flex-row md:space-x-4
+            md:flex md:flex-row
+            md:space-x-4
             w-full
             text-xs
             p-3
@@ -283,7 +285,8 @@
             border
             text-gray-600
             rounded-full
-            hover:shadow-lg hover:bg-gray-100
+            hover:shadow-lg
+            hover:bg-gray-100
           "
           @click="onReset"
         >
@@ -328,9 +331,9 @@ export default {
       unit_type: [],
       unit_type_chance: [],
       unit_type_color: [],
-      mask_type_chance :[],
-      mask_name : [],
-      mask_type_protect :[],
+      mask_type_chance: [],
+      mask_name: [],
+      mask_type_protect: [],
 
       residential_streets: [],
       commercial_streets: [],
@@ -417,8 +420,18 @@ export default {
       this.cloth_percentage = 20;
       this.not_use_percentage = 30;
 
-      this.mask_type_chance = [this.surgical_percentage , this.kn_percentage, this.cloth_percentage, this.not_use_percentage];
-      this.mask_name = ["Surgical mask","N95, KN95 or P2","Cloth mask or other","Not use mask"];
+      this.mask_type_chance = [
+        this.surgical_percentage,
+        this.kn_percentage,
+        this.cloth_percentage,
+        this.not_use_percentage,
+      ];
+      this.mask_name = [
+        "Surgical mask",
+        "N95, KN95 or P2",
+        "Cloth mask or other",
+        "Not use mask",
+      ];
       this.mask_type_protect = [0.7, 0.8, 0.3, 0];
 
       this.residential_streets = street.residential_streets;
@@ -436,7 +449,6 @@ export default {
         units_data,
         streets_data
       );
-
 
       this.agentmap.zoned_units = this.getZonedUnits(
         this.agentmap,
@@ -494,7 +506,7 @@ export default {
     },
 
     agentPopupMaker(agent) {
-      var string = "Mask: " + agent.mask +"</br>";
+      var string = "Mask: " + agent.mask + "</br>";
       string += "Infected: " + agent.infected + "</br>";
       if (agent.infected) {
         string += "Recovers at tick: " + agent.recovery_tick;
@@ -640,7 +652,7 @@ export default {
       var home_unit = this.agentmap.units.getLayer(home_id),
         home_center_coords = L.A.pointToCoordinateArray(home_unit.getCenter());
       var mask = this.randomMaskType();
-        
+
       var feature = {
         type: "Feature",
         properties: {
@@ -664,8 +676,8 @@ export default {
           commute_alarm: first_go_work_interval,
           infected: false,
           recovery_tick: 0,
-          mask : mask["type"],
-          mask_protect : mask["protect"],
+          mask: mask["type"],
+          mask_protect: mask["protect"],
         },
         geometry: {
           type: "Point",
@@ -688,9 +700,7 @@ export default {
 
             agent.setSpeed(agent.agentmap.speed_controller);
           }
-        }
-
-        else if (!agent.commuting) {
+        } else if (!agent.commuting) {
           if (Math.random() < 0.001) {
             var random_unit_point = agent.agentmap.getUnitPoint(
               agent.place.id,
@@ -719,8 +729,7 @@ export default {
 
           agent.recent_unit_id = agent.place.id;
         }
-      }
-      else if (agent.recent_unit_id !== -1) {
+      } else if (agent.recent_unit_id !== -1) {
         var recent_unit = agent.agentmap.units.getLayer(agent.recent_unit_id),
           agent_resident_index = recent_unit.resident_ids.indexOf(
             agent._leaflet_id
@@ -742,9 +751,20 @@ export default {
             unit.sterilized = false;
             unit.infected_ticket = agent.agentmap.state.ticks;
             unit.setStyle({ color: "red" });
-            if (Math.random() < agent.agentmap.infection_probability) {
-              this.infectAgent(agent);
-              break;
+
+            if (agent.protect !== 0) {
+              if (
+                Math.random() <
+                agent.agentmap.infection_probability * agent.protect
+              ) {
+                this.infectAgent(agent);
+                break;
+              }
+            } else {
+              if (Math.random() < agent.agentmap.infection_probability) {
+                this.infectAgent(agent);
+                break;
+              }
             }
           }
         }
@@ -922,9 +942,12 @@ export default {
       var factor = 0,
         random = Math.random();
       for (var i = this.mask_type_chance.length - 1; i >= 0; i--) {
-        factor += (this.mask_type_chance[i] / 100);
+        factor += this.mask_type_chance[i] / 100;
         if (random <= factor)
-          return { type: this.mask_name[i], protect: this.mask_type_protect[i] };
+          return {
+            type: this.mask_name[i],
+            protect: this.mask_type_protect[i],
+          };
       }
       return {};
     },
