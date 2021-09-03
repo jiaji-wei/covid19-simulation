@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-row justify-center gap-4 z-10 mb-10 lg:mb-0">
     <!-- Map -->
-    <div id="mapid" class="w-1/2" style="height: 633px"></div>
+    <div id="mapid" class="w-1/2" style="height: 779px"></div>
 
     <!-- Content -->
     <div
@@ -260,20 +260,10 @@
       <!-- button -->
       <div class="mt-5 text-right md:space-x-3 md:block flex flex-col-reverse">
         <button
-          class="
-            mb-2
-            md:mb-0
-            bg-blue-400
-            px-5
-            py-2
-            text-sm
-            shadow-sm
-            font-medium
-            tracking-wider
-            text-white
-            rounded-full
-            hover:shadow-lg hover:bg-green-500
-          "
+          :class="[
+            'mb-2 md:mb-0 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg',
+            pauseClass,
+          ]"
           @click="onRunButtonClick"
         >
           {{ play_text }}
@@ -354,6 +344,12 @@ export default {
       err_msg: "",
       play_text: PlayState.run,
     };
+  },
+  computed: {
+    pauseClass: (vm) =>
+      vm.play_text === PlayState.pause
+        ? "bg-red-500 hover:bg-red-500"
+        : "bg-blue-400 hover:bg-green-500",
   },
   async mounted() {
     location = this.$route.params.location;
