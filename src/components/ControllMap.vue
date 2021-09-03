@@ -752,10 +752,11 @@ export default {
             unit.infected_ticket = agent.agentmap.state.ticks;
             unit.setStyle({ color: "red" });
 
-            if (agent.protect !== 0) {
+            console.log("agent.protect:",agent.mask_protect);
+            if (agent.mask_protect !== 0) {
               if (
                 Math.random() <
-                agent.agentmap.infection_probability * agent.protect
+                agent.agentmap.infection_probability * agent.mask_protect
               ) {
                 this.infectAgent(agent);
                 break;
@@ -884,10 +885,12 @@ export default {
         false,
         true
       );
-
-      agent.commuting = true;
-      agent.next_commute = "work";
-      agent.commute_alarm += agent.go_work_interval;
+      
+      if (!this.stay_at_home) {
+        agent.commuting = true;
+        agent.next_commute = "work";
+        agent.commute_alarm += agent.go_work_interval;
+      }
     },
 
     checkCommute(agent) {
