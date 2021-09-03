@@ -7,11 +7,17 @@
           Stay up-to-date with what we’re doing
         </h1>
         <div class="flex flex-col sm:flex-row gap-6 mt-8">
-          <div
-            class="text-3xl text-center btn bg-bookmark-red hover:bg-bookmark-white hover:text-black"
+          <a
+            href="mailto:jiajiwei76@gmail.com"
+            class="
+              text-3xl text-center
+              btn
+              bg-bookmark-red
+              hover:bg-bookmark-white hover:text-black
+            "
           >
             Contact With jiajiwei76@gmail.com
-          </div>
+          </a>
         </div>
       </div>
     </div>
