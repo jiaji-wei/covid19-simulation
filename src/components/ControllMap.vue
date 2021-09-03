@@ -343,10 +343,10 @@ export default {
       kn_percentage: 0,
       cloth_percentage: 0,
 
-      school_closing: "false",
-      workplace_closing: "false",
-      gatherings: "false",
-      stay_at_home: "false",
+      school_closing: false,
+      workplace_closing: false,
+      gatherings: false,
+      stay_at_home: false,
 
       err_msg: "",
       play_text: PlayState.run,
@@ -437,6 +437,11 @@ export default {
       this.residential_streets = street.residential_streets;
       this.commercial_streets = street.commercial_streets;
       this.gathering_streets = street.gathering_streets;
+
+      this.school_closing= false;
+      this.workplace_closing= false;
+      this.gatherings= false;
+      this.stay_at_home= false;
       // agentmap.buildingify(london_data, bounding_points);
     },
 
@@ -472,7 +477,7 @@ export default {
           this.agentmap.zoned_units.gathering.length > 50 ? 10 : 5
         ));
 
-      this.agentmap.agentify(100, this.epidemicAgentMaker.bind(this));
+      this.agentmap.agentify(1, this.epidemicAgentMaker.bind(this));
 
       this.agentmap.agents.bindPopup(this.agentPopupMaker);
 
@@ -640,7 +645,6 @@ export default {
           random_public_id =
             this.agentmap.zoned_units.gathering[random_public_index];
 
-        
         workplace_id = random_workplace_id;
         gathering_id = random_public_id;
 
@@ -653,7 +657,8 @@ export default {
           go_home_randomizer = sign * Math.floor(Math.random() * 200),
           go_work_randomizer = -sign * Math.floor(Math.random() * 200);
 
-        (first_go_work_interval = first_go_work_base_interval + go_work_randomizer),
+        (first_go_work_interval =
+          first_go_work_base_interval + go_work_randomizer),
           (go_work_interval = go_work_base_interval + go_work_randomizer),
           (go_gathering_interval = go_gathering_base_interval),
           (go_home_interval = go_home_base_interval - go_home_randomizer);
@@ -702,16 +707,35 @@ export default {
     },
 
     setAgentController(agent) {
+      var self = this;
       agent.controller = () => {
         if (!agent.homebound && agent.agentmap.state.ticks !== 0) {
           if (agent.agentmap.state.ticks % agent.commute_alarm === 0) {
             if (agent.next_commute === "work") {
-              this.commuteToWork(agent);
+              var workplace = this.agentmap.units.getLayer(agent.workplace_id);
+
+              if (
+                (workplace.unit_type === "School" &&
+                  self.school_closing === "true") ||
+                (workplace.unit_type === "Public Area" &&
+                  self.gatherings === "true") ||
+                (workplace.unit_type === "Workplace" &&
+                  self.workplace_closing === "true") ||
+                self.stay_at_home === "true"
+              ) {
+                agent.commuting = true;
+                agent.commute_alarm += agent.go_home_interval;
+                console.log("stay at home,next:",agent.commute_alarm);
+              } else {
+                this.commuteToWork(agent);
+                agent.setSpeed(agent.agentmap.speed_controller);
+              }
             } else if (agent.next_commute === "home") {
               this.commuteToHome(agent);
+              agent.setSpeed(agent.agentmap.speed_controller);
             }
 
-            agent.setSpeed(agent.agentmap.speed_controller);
+            
           }
         } else if (!agent.commuting) {
           if (Math.random() < 0.001) {
@@ -720,6 +744,7 @@ export default {
               Math.random(),
               Math.random()
             );
+            agent.setSpeed(agent.agentmap.speed_controller);
             agent.scheduleTrip(random_unit_point, agent.place, 1);
           }
         }
@@ -833,16 +858,7 @@ export default {
     },
 
     commuteToWork(agent) {
-      var workplace = this.agentmap.units.getLayer(agent.workplace_id);
-
-      if (workplace.unit_type == "school" && this.school_closing === "true") {
-        return;
-      } else if (
-        workplace.unit_type == "workplace" &&
-        this.workplace_closing === "true"
-      ) {
-        return;
-      }
+      // var workplace = this.agentmap.units.getLayer(agent.workplace_id);
 
       var random_workplace_point = agent.agentmap.getUnitPoint(
         agent.workplace_id,
@@ -860,6 +876,7 @@ export default {
       agent.commuting = true;
       agent.next_commute = "home";
       agent.commute_alarm += agent.go_home_interval;
+      console.log(agent.next_commute,agent.commute_alarm);
     },
 
     commuteToPublic(agent) {
@@ -897,12 +914,11 @@ export default {
         false,
         true
       );
-      
-      if (!this.stay_at_home) {
-        agent.commuting = true;
-        agent.next_commute = "work";
-        agent.commute_alarm += agent.go_work_interval;
-      }
+
+      agent.commuting = true;
+      agent.next_commute = "work";
+      agent.commute_alarm += agent.go_work_interval;
+      console.log(agent.next_commute,agent.commute_alarm);
     },
 
     checkCommute(agent) {
