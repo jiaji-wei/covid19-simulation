@@ -23,8 +23,7 @@
         <h1 class="text-sm font-medium text-gray-700 py-2">Statistics</h1>
         <div
           class="
-            md:flex md:flex-row
-            md:space-x-4
+            md:flex md:flex-row md:space-x-4
             w-full
             text-xs
             p-3
@@ -76,6 +75,36 @@
         </div>
       </div>
 
+      <!-- Speed Slider -->
+      <div class="mt-5">
+        <div class="md:flex flex-row md:space-x-4 w-full text-xs">
+          <div class="mb-3 w-full text-xs">
+            <label class="font-semibold text-sm text-gray-600 py-2"
+              >Agent Speed
+            </label>
+
+            <input
+              v-model="speed_controller_input"
+              class="
+                appearance-none
+                block
+                w-full
+                bg-grey-lighter
+                text-grey-darker
+                border border-grey-lighter
+                rounded-lg
+                mt-3
+                h-3
+              "
+              type="range"
+              min=".2"
+              max="10"
+              step=".2"
+            />
+          </div>
+        </div>
+      </div>
+
       <!-- Mask -->
       <div class="mt-5">
         <div class="flex flex-col sm:flex-row items-center">
@@ -87,8 +116,7 @@
         <h2 class="text-red-500 mt-1 mb-2">{{ err_msg }}</h2>
         <div
           class="
-            md:flex md:flex-row
-            md:space-x-4
+            md:flex md:flex-row md:space-x-4
             w-full
             text-xs
             p-3
@@ -244,11 +272,11 @@
             tracking-wider
             text-white
             rounded-full
-            hover:shadow-lg
-            hover:bg-green-500
+            hover:shadow-lg hover:bg-green-500
           "
+          @click="onRunButtonClick"
         >
-          Run
+          {{ play_text }}
         </button>
 
         <button
@@ -265,9 +293,9 @@
             border
             text-gray-600
             rounded-full
-            hover:shadow-lg
-            hover:bg-gray-100
+            hover:shadow-lg hover:bg-gray-100
           "
+          @click="onReset"
         >
           Reset
         </button>
@@ -280,6 +308,17 @@
 import L from "leaflet";
 import "./../static/agentmaps.js";
 
+let location;
+let street;
+let streets_data;
+let units_data;
+let map_data;
+
+const PlayState = {
+  run: "Run",
+  pause: "Pause",
+};
+
 export default {
   name: "ControllMap",
   props: ["location"],
@@ -291,9 +330,9 @@ export default {
       animation_interval_input: 5,
       speed_controller_input: 1,
       infection_probability_input: 0.00001,
-      ticks_display: "",
-      infected_display: "",
-      healthy_display: "",
+      ticks_display: "0",
+      infected_display: "0",
+      healthy_display: "0",
       animation_interval_map: { 1: 0, 2: 1000, 3: 100, 4: 10, 5: 1 },
       bounding_box: [],
       unit_type: [],
@@ -313,41 +352,49 @@ export default {
       stay_at_home: "false",
 
       err_msg: "",
+      play_text: PlayState.run,
     };
   },
   async mounted() {
-    const location = this.$route.params.location;
-    const street = require(`./../static/map/${location}/street.js`);
-    const streets_data = require(`./../static/map/${location}/streets_data.json`);
-    const units_data = require(`./../static/map/${location}/units_data.json`);
-    const map_data = require(`./../static/map/${location}/map_data.json`);
-    const locDict = {
-      london: [
-        [51.51533, -0.08417],
-        [51.51057, -0.09303],
-      ],
-      melbourne: [
-        [-37.80622, 144.95781],
-        [-37.8122, 144.96759],
-      ],
-      newyork: [
-        [40.78084, -73.96389],
-        [40.77625, -73.95498],
-      ],
-      phoenix: [
-        [33.44135, -112.08095],
-        [33.43715, -112.07495],
-      ],
-      sydney: [
-        [-33.87599, 151.20289],
-        [-33.88086, 151.20969],
-      ],
-    };
-    await this.initMap(street, locDict[location]);
-    await this.setupSim({ streets_data, units_data, map_data });
+    location = this.$route.params.location;
+    street = require(`../static/map/${location}/street.js`);
+    streets_data = require(`../static/map/${location}/streets_data.json`);
+    units_data = require(`../static/map/${location}/units_data.json`);
+    map_data = require(`../static/map/${location}/map_data.json`);
+    this.setupAll();
   },
   methods: {
-    initMap(street, bounding_box) {
+    async setupAll() {
+      const locDict = {
+        london: [
+          [51.51533, -0.08417],
+          [51.51057, -0.09303],
+        ],
+        melbourne: [
+          [-37.80622, 144.95781],
+          [-37.8122, 144.96759],
+        ],
+        newyork: [
+          [40.78084, -73.96389],
+          [40.77625, -73.95498],
+        ],
+        phoenix: [
+          [33.44135, -112.08095],
+          [33.43715, -112.07495],
+        ],
+        sydney: [
+          [-33.87599, 151.20289],
+          [-33.88086, 151.20969],
+        ],
+      };
+      await this.initAgentMap(locDict[location]);
+      await this.setupFromData();
+    },
+    async setupFromData() {
+      await this.initStreet();
+      await this.setupSim();
+    },
+    initAgentMap(bounding_box) {
       //Set bounds for the area on the map where the simulation will run (gotten from openstreetmap.org).
       //Create and setup the Leafvar map object.
       var map = L.map("mapid").fitBounds(bounding_box).setZoom(16);
@@ -360,6 +407,8 @@ export default {
       }).addTo(map);
 
       this.agentmap = L.A.agentmap(map);
+    },
+    initStreet() {
       this.animation_interval_input = 5;
       this.speed_controller_input = 5;
       this.unit_type = ["School", "Public Area", "Workplace", "Home"];
@@ -373,7 +422,7 @@ export default {
       // agentmap.buildingify(london_data, bounding_points);
     },
 
-    setupSim({ streets_data, units_data, map_data }) {
+    setupSim() {
       //Set the data displays and input options in the interface to their default values.
       // this.defaultInterface();
 
@@ -446,8 +495,6 @@ export default {
 
       //Infect a random 10% of the population on the agentmap.
       this.infect(this.agentmap, 0.1);
-
-      this.agentmap.run();
     },
 
     /*                                                 */
@@ -459,7 +506,9 @@ export default {
       this.speed_controller_input = this.agentmap.speed_controller;
       this.infection_probability_input = this.agentmap.infection_probability;
       this.animation_interval_input = 5;
-      this.ticks_display = "";
+      this.ticks_display = "0";
+      this.infected_display = "0";
+      this.healthy_display = "0";
     },
 
     //Given an agent, return an HTML string to embed in a popup.
@@ -931,6 +980,24 @@ export default {
         this.err_msg = "* sum of three percentage must blow 100";
       } else {
         this.err_msg = "";
+      }
+    },
+
+    async onReset() {
+      this.play_text = PlayState.run;
+      this.defaultInterface();
+      this.agentmap.clear();
+      this.setupFromData();
+    },
+
+    onRunButtonClick() {
+      const { play_text } = this;
+      if (play_text == PlayState.run) {
+        this.play_text = PlayState.pause;
+        this.agentmap.run();
+      } else {
+        this.play_text = PlayState.run;
+        this.agentmap.pause();
       }
     },
   },
