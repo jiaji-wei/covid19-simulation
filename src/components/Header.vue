@@ -1,9 +1,11 @@
 <template>
   <nav class="container flex items-center py-4 mt-4 sm:mt-12">
-    <div class="py-1 text-blue-500 text-xl md:text-3xl font-bold mb-3">
-      <i class="fa fa-viruses"></i>
-      <router-link to="/"> Covid-19 Simulation </router-link>
-    </div>
+    <router-link to="/">
+      <div class="py-1 text-blue-500 text-xl md:text-3xl font-bold mb-3">
+        <i class="fa fa-viruses"></i>
+        Covid-19 Simulation
+      </div>
+    </router-link>
     <ul
       class="
         hidden
