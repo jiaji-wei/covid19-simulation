@@ -622,8 +622,10 @@ export default {
 
       var go_home_interval = null;
       var workplace_id = null;
+      var gathering_id = null;
       var first_go_work_interval = null;
       var go_work_interval = null;
+      var go_gathering_interval = null;
 
       if (!homebound) {
         var random_workplace_index = Math.floor(
@@ -632,19 +634,28 @@ export default {
           random_workplace_id =
             this.agentmap.zoned_units.commercial[random_workplace_index];
 
+        var random_public_index = Math.floor(
+            this.agentmap.zoned_units.gathering.length * Math.random()
+          ),
+          random_public_id =
+            this.agentmap.zoned_units.gathering[random_public_index];
+
+        
         workplace_id = random_workplace_id;
+        gathering_id = random_public_id;
 
         var first_go_work_base_interval = 300,
           go_work_base_interval = 900,
+          go_gathering_base_interval = 900,
           go_home_base_interval = 900;
 
         var sign = Math.random() < 0.5 ? 1 : -1,
           go_home_randomizer = sign * Math.floor(Math.random() * 200),
           go_work_randomizer = -sign * Math.floor(Math.random() * 200);
 
-        (first_go_work_interval =
-          first_go_work_base_interval + go_work_randomizer),
+        (first_go_work_interval = first_go_work_base_interval + go_work_randomizer),
           (go_work_interval = go_work_base_interval + go_work_randomizer),
+          (go_gathering_interval = go_gathering_base_interval),
           (go_home_interval = go_home_base_interval - go_home_randomizer);
       }
 
@@ -669,9 +680,11 @@ export default {
           next_commute: "work",
           commuting: false,
           home_id: home_id,
+          gathering_id: gathering_id,
           workplace_id: workplace_id,
           first_go_work_interval: first_go_work_interval,
           go_work_interval: go_work_interval,
+          go_gathering_interval: go_gathering_interval,
           go_home_interval: go_home_interval,
           commute_alarm: first_go_work_interval,
           infected: false,
@@ -752,7 +765,6 @@ export default {
             unit.infected_ticket = agent.agentmap.state.ticks;
             unit.setStyle({ color: "red" });
 
-            console.log("agent.protect:",agent.mask_protect);
             if (agent.mask_protect !== 0) {
               if (
                 Math.random() <
