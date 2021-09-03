@@ -3,7 +3,9 @@
   <section class="py-20 mt-20" id="cities">
     <!-- Heading -->
     <div class="sm:w-3/4 lg:w-5/12 mx-auto px-2">
-      <h1 class="text-3xl text-center text-bookmark-blue">Simulat in Citys</h1>
+      <h1 class="text-3xl text-center text-bookmark-blue">
+        Simulation in Citys
+      </h1>
       <p class="text-center text-bookmark-grey mt-4">
         We’ve got 5 citys in the website. Please do let us know if you want get
         another city simulation.
@@ -34,8 +36,7 @@
               class="
                 flex-1
                 btn btn-purple
-                hover:bg-bookmark-white
-                hover:text-black
+                hover:bg-bookmark-white hover:text-black
               "
             >
               Lunch App
@@ -56,8 +57,7 @@
               class="
                 flex-1
                 btn btn-purple
-                hover:bg-bookmark-white
-                hover:text-black
+                hover:bg-bookmark-white hover:text-black
               "
             >
               Lunch App
@@ -78,8 +78,7 @@
               class="
                 flex-1
                 btn btn-purple
-                hover:bg-bookmark-white
-                hover:text-black
+                hover:bg-bookmark-white hover:text-black
               "
             >
               Lunch App
@@ -100,8 +99,7 @@
               class="
                 flex-1
                 btn btn-purple
-                hover:bg-bookmark-white
-                hover:text-black
+                hover:bg-bookmark-white hover:text-black
               "
             >
               Lunch App
@@ -122,8 +120,7 @@
               class="
                 flex-1
                 btn btn-purple
-                hover:bg-bookmark-white
-                hover:text-black
+                hover:bg-bookmark-white hover:text-black
               "
             >
               Lunch App
