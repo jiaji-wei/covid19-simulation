@@ -26,17 +26,19 @@
           Coid-19 Simulation
         </h2>
         <p class="text-bookmark-grey text-lg text-center lg:text-left mb-6">
-          An Agent-based model to simulation Covid19 propagation by adding masks to the agents, 
-          imposing public policy influences and a variety of characteristics.
+          An Agent-based model to simulation Covid19 propagation by adding masks
+          to the agents, imposing public policy influences and a variety of
+          characteristics.
         </p>
         <div class="flex justify-center flex-wrap gap-6">
-          
-          <button
-            type="button"
-            class="btn btn-white hover:bg-bookmark-purple hover:text-white"
+          <a href="#cities">
+            <button
+              type="button"
+              class="btn btn-white hover:bg-bookmark-purple hover:text-white"
+            >
+              Go for Simulation!
+            </button></a
           >
-            <a href="#cities">Go for Simulation!</a>
-          </button>
         </div>
       </div>
       <!-- Image -->
@@ -48,7 +50,6 @@
         />
       </div>
     </div>
-    
   </section>
 </template>
 

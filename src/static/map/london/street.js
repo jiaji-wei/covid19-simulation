@@ -26,7 +26,6 @@ export var residential_streets = [
   "Finch Lane",
 ];
 export var commercial_streets = [
-  
   "Angel Court",
   "Adams Court",
   "Talbot Court",

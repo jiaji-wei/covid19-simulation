@@ -1,3 +1,43 @@
-export var residential_streets = ["Dixon Street", "Parker Street", "Parker Lane", "Foy Lane", "Clarke Street", "Dungate Lane", "Little Hay Street", "Thomas Lane", "Harbour Street", "Kimber Lane", "Pitt Street", "Goulburn Street", "Ultimo Road", "Liverpool Street", "George Street", "Hay Street", "Thomas Street", "Campbell Street", "Foster Street"];
-export var commercial_streets = ["Railway Square", "Cunningham Street", "Elizabeth Street", "Castlereagh Street", "Blackburn Street", "Horden Arcade", "Eagar Street", "Eagar Lane", "Nithsdale Lane", "Castlereagh St Cycleway (south)", "Castlereagh St Cycleway", "Wentworth Avenue"];
-export var gathering_streets = ["Sussex Street", "Liverpool St Cycleway", "Edgar or Spanish Quarter Steps", "Douglass Lane", "Summit Arcade", "Carruthers Place"];
+export var residential_streets = [
+  "Dixon Street",
+  "Parker Street",
+  "Parker Lane",
+  "Foy Lane",
+  "Clarke Street",
+  "Dungate Lane",
+  "Little Hay Street",
+  "Thomas Lane",
+  "Harbour Street",
+  "Kimber Lane",
+  "Pitt Street",
+  "Goulburn Street",
+  "Ultimo Road",
+  "Liverpool Street",
+  "George Street",
+  "Hay Street",
+  "Thomas Street",
+  "Campbell Street",
+  "Foster Street",
+];
+export var commercial_streets = [
+  "Railway Square",
+  "Cunningham Street",
+  "Elizabeth Street",
+  "Castlereagh Street",
+  "Blackburn Street",
+  "Horden Arcade",
+  "Eagar Street",
+  "Eagar Lane",
+  "Nithsdale Lane",
+  "Castlereagh St Cycleway (south)",
+  "Castlereagh St Cycleway",
+  "Wentworth Avenue",
+];
+export var gathering_streets = [
+  "Sussex Street",
+  "Liverpool St Cycleway",
+  "Edgar or Spanish Quarter Steps",
+  "Douglass Lane",
+  "Summit Arcade",
+  "Carruthers Place",
+];

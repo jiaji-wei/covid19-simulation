@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-row justify-center gap-4 z-10 mb-10 lg:mb-0">
     <!-- Map -->
-    <div id="mapid" class="w-1/2" style="height: 633px"></div>
+    <div id="mapid" class="w-1/2" style="height: 779px"></div>
 
     <!-- Content -->
     <div
@@ -68,9 +68,39 @@
                 h-3
               "
               type="range"
-              min=".00001"
+              min=".0001"
               max=".01"
-              step=".00001"
+              step=".0001"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Speed Slider -->
+      <div class="mt-5">
+        <div class="md:flex flex-row md:space-x-4 w-full text-xs">
+          <div class="mb-3 w-full text-xs">
+            <label class="font-semibold text-sm text-gray-600 py-2"
+              >Agent Speed
+            </label>
+
+            <input
+              v-model="speed_controller_input"
+              class="
+                appearance-none
+                block
+                w-full
+                bg-grey-lighter
+                text-grey-darker
+                border border-grey-lighter
+                rounded-lg
+                mt-3
+                h-3
+              "
+              type="range"
+              min=".2"
+              max="10"
+              step=".2"
             />
           </div>
         </div>
@@ -232,23 +262,13 @@
       <!-- button -->
       <div class="mt-5 text-right md:space-x-3 md:block flex flex-col-reverse">
         <button
-          class="
-            mb-2
-            md:mb-0
-            bg-blue-400
-            px-5
-            py-2
-            text-sm
-            shadow-sm
-            font-medium
-            tracking-wider
-            text-white
-            rounded-full
-            hover:shadow-lg
-            hover:bg-green-500
-          "
+          :class="[
+            'mb-2 md:mb-0 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg',
+            pauseClass,
+          ]"
+          @click="onRunButtonClick"
         >
-          Run
+          {{ play_text }}
         </button>
 
         <button
@@ -268,6 +288,7 @@
             hover:shadow-lg
             hover:bg-gray-100
           "
+          @click="onReset"
         >
           Reset
         </button>
@@ -280,6 +301,17 @@
 import L from "leaflet";
 import "./../static/agentmaps.js";
 
+let location;
+let street;
+let streets_data;
+let units_data;
+let map_data;
+
+const PlayState = {
+  run: "Run",
+  pause: "Pause",
+};
+
 export default {
   name: "ControllMap",
   props: ["location"],
@@ -290,15 +322,18 @@ export default {
       agentmap: null,
       animation_interval_input: 5,
       speed_controller_input: 1,
-      infection_probability_input: 0.00001,
-      ticks_display: "",
-      infected_display: "",
-      healthy_display: "",
+      infection_probability_input: 0.0001,
+      ticks_display: "0",
+      infected_display: "0",
+      healthy_display: "0",
       animation_interval_map: { 1: 0, 2: 1000, 3: 100, 4: 10, 5: 1 },
       bounding_box: [],
       unit_type: [],
       unit_type_chance: [],
       unit_type_color: [],
+      mask_name: [],
+      mask_type_protect: [],
+
       residential_streets: [],
       commercial_streets: [],
       gathering_streets: [],
@@ -309,55 +344,65 @@ export default {
       not_wear_percentage: 20,
 
       mask_type: [],
-      mask_type_chance: [],
       mask_protect: [],
 
-      school_closing: "false",
-      workplace_closing: "false",
-      gatherings: "false",
-      stay_at_home: "false",
+      school_closing: false,
+      workplace_closing: false,
+      gatherings: false,
+      stay_at_home: false,
 
       err_msg: "",
+      play_text: PlayState.run,
     };
+  },
+  computed: {
+    pauseClass: (vm) =>
+      vm.play_text === PlayState.pause
+        ? "bg-red-500 hover:bg-red-500"
+        : "bg-blue-400 hover:bg-green-500",
   },
   async mounted() {
-    const location = this.$route.params.location;
-    const street = require(`./../static/map/${location}/street.js`);
-    const streets_data = require(`./../static/map/${location}/streets_data.json`);
-    const units_data = require(`./../static/map/${location}/units_data.json`);
-    const map_data = require(`./../static/map/${location}/map_data.json`);
-    const locDict = {
-      london: [
-        [51.51533, -0.08417],
-        [51.51057, -0.09303],
-      ],
-      melbourne: [
-        [-37.80622, 144.95781],
-        [-37.8122, 144.96759],
-      ],
-      newyork: [
-        [40.78084, -73.96389],
-        [40.77625, -73.95498],
-      ],
-      phoenix: [
-        [33.44135, -112.08095],
-        [33.43715, -112.07495],
-      ],
-      sydney: [
-        [-33.87599, 151.20289],
-        [-33.88086, 151.20969],
-      ],
-    };
-    await this.initMap(street, locDict[location]);
-    await this.setupSim({ streets_data, units_data, map_data });
+    location = this.$route.params.location;
+    street = require(`../static/map/${location}/street.js`);
+    streets_data = require(`../static/map/${location}/streets_data.json`);
+    units_data = require(`../static/map/${location}/units_data.json`);
+    map_data = require(`../static/map/${location}/map_data.json`);
+    this.setupAll();
   },
   methods: {
-    initMap(street, bounding_box) {
-      //Set bounds for the area on the map where the simulation will run (gotten from openstreetmap.org).
-      //Create and setup the Leafvar map object.
+    async setupAll() {
+      const locDict = {
+        london: [
+          [51.51533, -0.08417],
+          [51.51057, -0.09303],
+        ],
+        melbourne: [
+          [-37.80622, 144.95781],
+          [-37.8122, 144.96759],
+        ],
+        newyork: [
+          [40.78084, -73.96389],
+          [40.77625, -73.95498],
+        ],
+        phoenix: [
+          [33.44135, -112.08095],
+          [33.43715, -112.07495],
+        ],
+        sydney: [
+          [-33.87599, 151.20289],
+          [-33.88086, 151.20969],
+        ],
+      };
+      await this.initAgentMap(locDict[location]);
+      await this.setupFromData();
+    },
+    async setupFromData() {
+      await this.initStreet();
+      await this.setupSim();
+    },
+    initAgentMap(bounding_box) {
       var map = L.map("mapid").fitBounds(bounding_box).setZoom(16);
 
-      //Get map graphics by adding OpenStreetMap tiles to the map object.
       L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution:
           'Thanks to <a href="http://openstreetmap.org">OpenStreetMap</a> community',
@@ -365,33 +410,46 @@ export default {
       }).addTo(map);
 
       this.agentmap = L.A.agentmap(map);
+    },
+    initStreet() {
       this.animation_interval_input = 5;
       this.speed_controller_input = 5;
       this.unit_type = ["School", "Public Area", "Workplace", "Home"];
       this.unit_type_chance = [0.1, 0.2, 0.3, 0.4];
       this.unit_type_color = ["blue", "green", "#06B6D4", "black"];
 
-      this.mask_type = [
-        "Surgical Mask",
-        "N95, KN95",
-        "Cloth Mask or other",
+
+      this.surgical_percentage = 40;
+      this.kn_percentage = 10;
+      this.cloth_percentage = 20;
+      this.not_use_percentage = 30;
+
+      this.mask_type_chance = [
+        this.surgical_percentage,
+        this.kn_percentage,
+        this.cloth_percentage,
+        this.not_use_percentage,
+      ];
+      this.mask_name = [
+        "Surgical mask",
+        "N95, KN95 or P2",
+        "Cloth mask or other",
         "Not use mask",
       ];
-      this.mask_type_chance = [0.4, 0.1, 0.3, 0.2];
-      this.mask_protect = [0.7, 0.8, 0.3, 0];
+      this.mask_type_protect = [0.7, 0.8, 0.3, 0];
 
       this.residential_streets = street.residential_streets;
       this.commercial_streets = street.commercial_streets;
       this.gathering_streets = street.gathering_streets;
+
+      this.school_closing= false;
+      this.workplace_closing= false;
+      this.gatherings= false;
+      this.stay_at_home= false;
       // agentmap.buildingify(london_data, bounding_points);
     },
 
-    setupSim({ streets_data, units_data, map_data }) {
-      //Set the data displays and input options in the interface to their default values.
-      // this.defaultInterface();
-
-      //Generate and display streets and units on the map.
-      //Load the units from units_data instead of generating them from scratch to speed things up.
+    setupSim() {
       this.agentmap.buildingify(
         this.leafletbounding_box,
         map_data,
@@ -400,8 +458,6 @@ export default {
         units_data,
         streets_data
       );
-
-      //Split the map's units into residential and commercial zones.
 
       this.agentmap.zoned_units = this.getZonedUnits(
         this.agentmap,
@@ -412,7 +468,6 @@ export default {
 
       this.setUnitsProperties(this.agentmap);
 
-      //Use only a subset of the zoned units.
       (this.agentmap.zoned_units.residential = this.pick_random_n(
         this.agentmap.zoned_units.residential,
         this.agentmap.zoned_units.residential.length > 50 ? 50 : 30
@@ -426,57 +481,45 @@ export default {
           this.agentmap.zoned_units.gathering.length > 50 ? 10 : 5
         ));
 
-      //Generate 200 agents according to the rules of epidemicAgentMaker, displaying them as blue, .5 meter radius circles.
       this.agentmap.agentify(100, this.epidemicAgentMaker.bind(this));
 
-      //Attach a popup to show when any agent is clicked.
       this.agentmap.agents.bindPopup(this.agentPopupMaker);
 
-      //Attach a popup to show when any unit is clicked.
       this.agentmap.units.bindPopup(this.unitPopupMaker);
 
-      //Keep a count of how many infected agents there are.
       this.agentmap.infected_count = 0;
 
-      //Set how infectious the disease is (the probability that someone nearby will get infected)
       this.agentmap.infection_probability = 0.00001;
 
-      //Set the default speed for the agent.
       this.agentmap.speed_controller = 1;
 
-      //Do the following on each tick of the simulation.
       this.agentmap.controller = this.agentmapController;
 
-      //Set each Agent up.
       this.agentmap.agents.eachLayer((agent) => {
-        //Add the agent's ID to its home unit's resident_ids array to help keep track of which agents are in the same unit.
         var home_unit = this.agentmap.units.getLayer(agent.home_id);
         home_unit.resident_ids.push(agent._leaflet_id);
 
-        //Define the update_func for the agent.
         this.setAgentController(agent);
       });
 
-      //Infect a random 10% of the population on the agentmap.
       this.infect(this.agentmap, 0.1);
-
-      this.agentmap.run();
     },
 
     defaultInterface() {
       this.speed_controller_input = this.agentmap.speed_controller;
       this.infection_probability_input = this.agentmap.infection_probability;
       this.animation_interval_input = 5;
-      this.ticks_display = "";
+      this.ticks_display = "0";
+      this.infected_display = "0";
+      this.healthy_display = "0";
     },
 
     agentPopupMaker(agent) {
-      var string = "Infected: " + agent.infected + "</br>";
-      string += "Mask: " + agent.mask_type + "</br>";
+      var string = "Mask: " + agent.mask + "</br>";
+      string += "Infected: " + agent.infected + "</br>";
       if (agent.infected) {
         string += "Recovers at tick: " + agent.recovery_tick;
       }
-
       return string;
     },
 
@@ -588,21 +631,30 @@ export default {
 
       var go_home_interval = null;
       var workplace_id = null;
+      var gathering_id = null;
       var first_go_work_interval = null;
       var go_work_interval = null;
+      var go_gathering_interval = null;
 
       if (!homebound) {
-        //Get a ranom commercial unit and its ID.
         var random_workplace_index = Math.floor(
             this.agentmap.zoned_units.commercial.length * Math.random()
           ),
           random_workplace_id =
             this.agentmap.zoned_units.commercial[random_workplace_index];
 
+        var random_public_index = Math.floor(
+            this.agentmap.zoned_units.gathering.length * Math.random()
+          ),
+          random_public_id =
+            this.agentmap.zoned_units.gathering[random_public_index];
+
         workplace_id = random_workplace_id;
+        gathering_id = random_public_id;
 
         var first_go_work_base_interval = 300,
           go_work_base_interval = 900,
+          go_gathering_base_interval = 900,
           go_home_base_interval = 900;
 
         var sign = Math.random() < 0.5 ? 1 : -1,
@@ -612,6 +664,7 @@ export default {
         (first_go_work_interval =
           first_go_work_base_interval + go_work_randomizer),
           (go_work_interval = go_work_base_interval + go_work_randomizer),
+          (go_gathering_interval = go_gathering_base_interval),
           (go_home_interval = go_home_base_interval - go_home_randomizer);
       }
 
@@ -634,15 +687,19 @@ export default {
           next_commute: "work",
           commuting: false,
           home_id: home_id,
+          gathering_id: gathering_id,
           workplace_id: workplace_id,
           first_go_work_interval: first_go_work_interval,
           go_work_interval: go_work_interval,
+          go_gathering_interval: go_gathering_interval,
           go_home_interval: go_home_interval,
           commute_alarm: first_go_work_interval,
           mask_type: mask.type,
           protect: mask.protect,
           infected: false,
           recovery_tick: 0,
+          mask: mask["type"],
+          mask_protect: mask["protect"],
         },
         geometry: {
           type: "Point",
@@ -654,16 +711,33 @@ export default {
     },
 
     setAgentController(agent) {
+      var self = this;
       agent.controller = () => {
         if (!agent.homebound && agent.agentmap.state.ticks !== 0) {
           if (agent.agentmap.state.ticks % agent.commute_alarm === 0) {
             if (agent.next_commute === "work") {
-              this.commuteToWork(agent);
+              var workplace = this.agentmap.units.getLayer(agent.workplace_id);
+
+              if (
+                (workplace.unit_type === "School" &&
+                  self.school_closing === "true") ||
+                (workplace.unit_type === "Public Area" &&
+                  self.gatherings === "true") ||
+                (workplace.unit_type === "Workplace" &&
+                  self.workplace_closing === "true") ||
+                self.stay_at_home === "true"
+              ) {
+                agent.commuting = true;
+                agent.commute_alarm += agent.go_home_interval;
+                console.log("stay at home,next:",agent.commute_alarm);
+              } else {
+                this.commuteToWork(agent);
+                agent.setSpeed(agent.agentmap.speed_controller);
+              }
             } else if (agent.next_commute === "home") {
               this.commuteToHome(agent);
+              agent.setSpeed(agent.agentmap.speed_controller);
             }
-
-            agent.setSpeed(agent.agentmap.speed_controller);
           }
         } else if (!agent.commuting) {
           if (Math.random() < 0.001) {
@@ -672,6 +746,7 @@ export default {
               Math.random(),
               Math.random()
             );
+            agent.setSpeed(agent.agentmap.speed_controller);
             agent.scheduleTrip(random_unit_point, agent.place, 1);
           }
         }
@@ -716,9 +791,20 @@ export default {
             unit.sterilized = false;
             unit.infected_ticket = agent.agentmap.state.ticks;
             unit.setStyle({ color: "red" });
-            if (Math.random() < agent.agentmap.infection_probability) {
-              this.infectAgent(agent);
-              break;
+
+            if (agent.mask_protect !== 0) {
+              if (
+                Math.random() <
+                agent.agentmap.infection_probability * agent.mask_protect
+              ) {
+                this.infectAgent(agent);
+                break;
+              }
+            } else {
+              if (Math.random() < agent.agentmap.infection_probability) {
+                this.infectAgent(agent);
+                break;
+              }
             }
           }
         }
@@ -774,16 +860,7 @@ export default {
     },
 
     commuteToWork(agent) {
-      var workplace = this.agentmap.units.getLayer(agent.workplace_id);
-
-      if (workplace.unit_type == "school" && this.school_closing === "true") {
-        return;
-      } else if (
-        workplace.unit_type == "workplace" &&
-        this.workplace_closing === "true"
-      ) {
-        return;
-      }
+      // var workplace = this.agentmap.units.getLayer(agent.workplace_id);
 
       var random_workplace_point = agent.agentmap.getUnitPoint(
         agent.workplace_id,
@@ -801,6 +878,7 @@ export default {
       agent.commuting = true;
       agent.next_commute = "home";
       agent.commute_alarm += agent.go_home_interval;
+      console.log(agent.next_commute,agent.commute_alarm);
     },
 
     commuteToPublic(agent) {
@@ -842,6 +920,7 @@ export default {
       agent.commuting = true;
       agent.next_commute = "work";
       agent.commute_alarm += agent.go_work_interval;
+      console.log(agent.next_commute,agent.commute_alarm);
     },
 
     checkCommute(agent) {
@@ -895,9 +974,12 @@ export default {
       var factor = 0,
         random = Math.random();
       for (var i = this.mask_type_chance.length - 1; i >= 0; i--) {
-        factor += this.mask_type_chance[i];
+        factor += this.mask_type_chance[i] / 100;
         if (random <= factor)
-          return { type: this.mask_type[i], protect: this.mask_protect[i] };
+          return {
+            type: this.mask_name[i],
+            protect: this.mask_type_protect[i],
+          };
       }
       return {};
     },
@@ -910,6 +992,24 @@ export default {
         this.err_msg = "* sum of three percentage must blow 100";
       } else {
         this.err_msg = "";
+      }
+    },
+
+    async onReset() {
+      this.play_text = PlayState.run;
+      this.defaultInterface();
+      this.agentmap.clear();
+      this.setupFromData();
+    },
+
+    onRunButtonClick() {
+      const { play_text } = this;
+      if (play_text == PlayState.run) {
+        this.play_text = PlayState.pause;
+        this.agentmap.run();
+      } else {
+        this.play_text = PlayState.run;
+        this.agentmap.pause();
       }
     },
   },
